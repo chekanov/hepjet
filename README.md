@@ -1,13 +1,12 @@
 # HepJet
 A small library to benchmak jet algorithms for HEP physics
 
-All algorithms use double precision and eta-phi space to define distances. The direcories
-are organized as following:
+All algorithms use double precision and eta-phi space to define distances. The directories are organized as following:
 
 <p>
 <b>fastjet</b>        - the official FastJet implementation <br>
 <b>scjet_cpp</b>      - a simple (slow) implementation of KT-jet algorithms <br>
-<br>scijet_java</b>   - Java implementation of the previous simple algorithm. <br>
+<b>scijet_java</b>   - Java implementation of the previous simple algorithm. <br>
 <p>
 
 
