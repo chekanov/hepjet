@@ -1,13 +1,13 @@
 # HepJet
 A small library to benchmak jet algorithms for HEP physics
 
-All algorithms use double precision and rapidity-phi space to define distances. The directories are organized as following:
+All algorithms use double precision and rapidity-phi space to define distances. The directories to performe benchmarks are organized as following:
 
 <p>
 <b>fastjet</b>       - the official FastJet implementation <br>
-<b>scjet_cpp</b>     - a simple (slow) implementation of KT-jet algorithms <br>
-<b>scjet_java</b>   - Java implementation of the previous simple algorithm. <br>
-<b>ktjet</b>         - KtJet++ benchmark code. Works only for the kT mode<br>
+<b>scjet_cpp</b>     - an alternative implementation of kT-jet clustering <br>
+<b>scjet_java</b>    - Java implementation of the previous c++ algorithm. <br>
+<b>ktjet</b>         - original KtJet++ benchmark code. Works only for the kT mode<br>
 <p>
 
 
