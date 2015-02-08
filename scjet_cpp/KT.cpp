@@ -1,3 +1,6 @@
+// KT is class to build KT-type of jets in inclusive mode
+// S.Chekanov (ANL)
+
 #include "KT.h"
 #include "Timer.h"
 #include <vector>
@@ -13,6 +16,13 @@ bool comp(ParticleD* rhs1, ParticleD* rhs2) {
 
 
 
+/** @brief Initialize calculations of the KT-type of jets 
+    @param R distance parameter
+    @param recom recombination mode. Only recom=1 is supported (E-scheme, p=p1+p2) 
+    @param mode defines the algorithm. 1 means KT, -1 is anti-KT, 0 is Cambridge/Aachen
+    @author S.Chekanov 
+    @version 1.0 02/02/14
+*/
 KT::KT(double R, int recom, int mode, double minpt)
 {
 	m_R = R;
@@ -43,6 +53,12 @@ KT::KT(double R, int recom, int mode, double minpt)
 }
 
 
+/** @brief Main method to build  KT-type of jets 
+    @param list list with particles 
+    @return list with unsorted jets 
+    @author S.Chekanov 
+    @version 1.0 02/02/14
+*/
 std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 {
 
@@ -51,15 +67,11 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 	int size = list.size();
 
 	if (m_debug)
-	{
 	     tm.start();	
-	}
-
 
 	double ktdistance1[size];
 	bool   is_consider[size];
-	for (int m = 0; m < size; m++)
-	{
+	for (int m = 0; m < size; m++) { 
 		is_consider[m] = true;
 		ParticleD *p1 = static_cast<ParticleD*>(list[m]);
 		ktdistance1[m] = getKtDistance1(p1);
@@ -156,15 +168,18 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
         }
 
 
-        if (m_debug)
-        {
-
-
+        if (m_debug) { 
                tm.stop();
                std::cout << "  --> Final time for calculation (ms):" << tm.duration() << std::endl;
                tm.start();
                std::cout << "  --> Nr of jets : " << jets.size() << std::endl;
                printJets();
+               // sanity test. All particles were merged
+               int nn=0;
+               for (int i = 0; i < size; i++) 
+                        if (!is_consider[i]) nn++; 
+                if (nn != (int)list.size())  std::cout << "!!!! Error! Not all particles were assigned" << list.size() << " done=" << nn << std::endl; 
+
 
         }
 
@@ -172,15 +187,22 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
 }
 
-std::vector<ParticleD*> KT::getJetsSorted()
-{
-        sort(jets.begin(), jets.end(), comp);
+
+
+/** @brief Get sorted jets
+    @return list with sorted jets 
+    @author S.Chekanov 
+    @version 1.0 02/02/14
+*/
+std::vector<ParticleD*> KT::getJetsSorted() { 
+       sort(jets.begin(), jets.end(), comp);
        return jets;
 }
 
-void KT::printJets()
-{
 
+/** Print sorted jets
+*/
+void KT::printJets() { 
 
         std::vector<ParticleD*> sjets = getJetsSorted();
 
@@ -216,6 +238,8 @@ double KT::phiAngle(double phi)
         return phi;
 }
 
+
+// calculate KT distance between any 2 particles
 double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 {
 	double rsq, esq, deltaEta, deltaPhi;
@@ -235,16 +259,18 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	}
 	else if (m_mode == -1)
 	{
-		esq = std::min(1.0 / a->getEt2(), 1.0 / b->getEt2()); // antiKT
+		esq = std::min(1.0 / a->getEt2(), 1.0 / b->getEt2()); // anti-KT
 	}
 	else
 	{
-		esq = std::min(a->getEt2(), b->getEt2()); // kT
+		esq = std::min(a->getEt2(), b->getEt2()); // kT (fallback) 
 	}
 
 	return (esq * rsq / m_R2);
 }
 
+
+// calculate distance to the beam
 double KT::getKtDistance1(ParticleD *a)
 {
 	if (m_mode == 1)
@@ -262,6 +288,8 @@ double KT::getKtDistance1(ParticleD *a)
 	return a->getEt2();
 }
 
+
+// set debugging mode
 void KT::setDebug(bool debug)
 {
 

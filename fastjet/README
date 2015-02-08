@@ -5,6 +5,10 @@
 
 # Run this example as:
 make
+make run # run using ./data/single-event.dat
+
+
+# or using manually:
 ./01-basic < ../data/single-event.dat
 
 # run using ~650 particles

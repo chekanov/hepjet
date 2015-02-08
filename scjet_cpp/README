@@ -2,7 +2,11 @@
 # S.Chekanov (ANL) 
 
 make
+make run # runs using ../data/single-event.dat
 
+
+
+# Or using manually:
 # standard file..
 ./main < ../data/single-event.dat
 

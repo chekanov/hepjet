@@ -1,18 +1,19 @@
-#include <iostream> // needed for io
-#include <cstdio>   // needed for io
-#include "ParticleD.h"   // needed for io
-#include "KT.h"   // needed for io
+// An example program to show how to run scjet (C++)
+// using an input 
+// use it as: main < input.txt
+// S.Chekanov (ANL)
+
+
+#include <iostream> 
+#include <cstdio>   
+#include "ParticleD.h"  
+#include "KT.h"   
 
 using namespace std;
 
-/// an example program showing how to use fastjet
 int main(){
   
   // read in input particles
-  //----------------------------------------------------------
-
-    // read in input particles
-  //----------------------------------------------------------
   vector<ParticleD*> input_particles;
 
   double px, py , pz, E;
@@ -22,6 +23,7 @@ int main(){
   }
 
    cout << "Reading " << input_particles.size() << " particles" << endl; 
+   // build anti-kt jets with R=0.6
    KT* jet= new KT(0.6, 1, -1, 5.0);
    jet->setDebug(true);
    jet->buildJets(input_particles);

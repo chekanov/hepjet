@@ -1,5 +1,5 @@
-#   g++ 01-basic.cc fjcore.cc -o 01-basic
-#
+# Compile scjet example
+# S.Chekanov (ANL)  
 
 CXXFLAGS= -O2 -Wall -fPIC
 LDFLAGS=-g
@@ -12,8 +12,8 @@ main: main.o KT.o ParticleD.o
 clean:
 	rm -vf main *.o *~ 
 
-distclean: clean
-	rm -f *.o
+run:
+	./main < ../data/single-event.dat
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) -c $< -o $@
