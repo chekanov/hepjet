@@ -1,0 +1,12 @@
+# This example contains FastJet from the original web page http://fastjet.fr/
+# Read original README.org
+# This example was modified to perform benchmarks.
+# S.Chekanov (ANL) 
+
+# Run this example as:
+make
+./01-basic < ../data/single-event.dat
+
+# run using ~650 particles
+./01-basic < ../data/single-event-large.dat
+

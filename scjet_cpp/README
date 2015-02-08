@@ -1,0 +1,10 @@
+# How to run a C++ code foe KT algorithms:
+# S.Chekanov (ANL) 
+
+make
+
+# standard file..
+./main < ../data/single-event.dat
+
+# using large event
+./main < ../data/single-event-large.dat

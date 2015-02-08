@@ -1,0 +1,16 @@
+# How to run using KT jet using java:
+# S.Chekanov (ANL) 
+
+
+# compile
+javac *.java
+# or type : make
+
+# Run the code:
+java KT ../data/single-event.dat
+# or type:  make run
+
+
+# large sample
+java KT ../data/single-event-large.dat
+
