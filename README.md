@@ -1,4 +1,4 @@
-# hepjet
+# HepJet
 A small library to benchmak jet algorithms for HEP physics
 
 All algorithms use double precision and eta-phi space to define distances.
