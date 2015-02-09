@@ -1,7 +1,7 @@
 # HepJet
-A library to benchmak verious jet algorithms for HEP physics
+A library to benchmark various jet algorithms for HEP physics
 
-All algorithms use double precision and rapidity-phi space to define distances. The directories to performe benchmarks are organized as following:
+All algorithms use double precision and rapidity-phi space to define distances. The directories to perform benchmarks are organized as following:
 
 <p>
 <b>fastjet</b>       - the official FastJet implementation <br>
@@ -11,11 +11,12 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <p>
 
 
-FastJet is typically a factor 40 faster than scjet_cpp and factor 160 faster than the Java implementation of the simple algorithm. There are however some differences in the output jets between different implementations.  No difference is detected between the FastJet and KtJet implementations using the kT mode (R=0.6). 
+FastJet is typically a factor 40 faster than scjet_cpp and factor 160 faster than the Java implementation of the simple algorithm. There are however some differences in the output jets between different implementations. Difference between scjet and fastjet implementations 
+at the level of 2-10% for subleading jets. No difference was found between the FastJet and KtJet implementations using the kT mode (R=0.6). 
 
 <p>
 
 
-Read "README" file to see how to run each case. Makefiles are included inside each directory.
+Read "README" files in each directory to see how to run each case. Makefile files are included inside each directory.
 
 S.Chekanov (ANL)
