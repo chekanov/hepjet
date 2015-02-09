@@ -10,8 +10,8 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <b>scjet_java</b>    - Implementation of the SCJet jet algorithm in Java. <br>
 <p>
 
-FastJet and KtJet C++ codes used by this library are taken  from the orinal FastJet and KrJet web pages. 
-SCjet is a light-weight algorithm  for the jet validation used by the 
+FastJet and KtJet C++ codes used by this library are taken  from the orinal <a href="http://fastjet.fr/">FastJet</a> and <a href="https://ktjet.hepforge.org/">KtJet</a> web pages. 
+SCjet is a light-weight implementation of the kT/anti-kT algorithms for jet validation used by the 
 <a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
 More details <a href="https://github.com/chekanov/hephysics">HepPhysics</a>. 
 
