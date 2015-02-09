@@ -6,9 +6,14 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <p>
 <b>fastjet</b>       - the official FastJet implementation <br>
 <b>ktjet</b>         - original KtJet (C++) benchmark code. Works only in the kT mode<br>
-<b>scjet_cpp</b>     - an alternative implementation of kT-jet / anti-kT clustering in C++<br>
-<b>scjet_java</b>    - Java implementation of the previous c++ algorithm. <br>
+<b>scjet_cpp</b>     - SCJet. An alternative implementation of kT-jet / anti-kT clustering in C++<br>
+<b>scjet_java</b>    - Implementation of the SCJet jet algorithm in Java. <br>
 <p>
+
+FastJet and KtJet C++ codes used by this library are taken  from the orinal FastJet and KrJet web pages. 
+SCjet is a light-weight algorithm  for the jet validation used by the 
+<a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
+More details <a href="https://github.com/chekanov/hephysics">HepPhysics</a>. 
 
 
 <h2>Benchmark results</h2>
