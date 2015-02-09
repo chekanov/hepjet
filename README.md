@@ -25,7 +25,7 @@ FastJet is  about a factor 40 faster than SCJet (<b>scjet_cpp</b>) and a factor 
 
 However, there are some differences in the output jets between different implementations. 
 The difference between SCJet and FastJet implementations 
-is at the level of 2-10% for subleading jets. 
+is at the level of 2-10% for transverse momentum of subleading jets. 
 No difference was found between the FastJet and KtJet C++ implementations using the kT mode (R=0.6). 
 
 <p>
