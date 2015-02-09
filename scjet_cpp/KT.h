@@ -8,16 +8,14 @@
 #include <iostream>
 #include <limits>
 
-/// <summary>
-/// Longitudinally-invariant kT, anti-KT and  Cambridge/Aachen clustering algorithms. 
-/// The algorithm uses rapidity-phi for the distance parameter and double values for merging. The input and output for this algorithm  is  <seealso cref="hephysics.jet.ParticleD"/> class. <para> 
-/// </para>
-/// This class uses double values for calculations, caching and requires more memory, compared to the light-weight <seealso cref="hephysics.jet.KTjet"/> class that uses floats and pseudo-rapidity to define the distance parameter. This implementation can access jet constituents.  <para></para> 
-/// This algorithm is similar to the FastJet http://fastjet.fr/ implementation that uses rapidity.  Use light-weight <seealso cref="hephysics.jet.KTjet"/> class when using pseudo-rapidity and phi to define distance parameters. The method uses E-scheme to combine particles (p1+p2). More details is in http://arxiv.org/pdf/hep-ph/0210022v1.pdf. 
-/// 
-/// @author S.Chekanov
-/// 
-/// </summary>
+/**
+ Longitudinally-invariant kT, anti-KT and  Cambridge/Aachen clustering algorithms. 
+ The algorithm uses rapidity-phi for the distance parameter and double values for merging. 
+ This class uses double values for calculations, caching and requires more memory.
+ This algorithm is similar to the FastJet http://fastjet.fr/ implementation that uses rapidity.  
+ @author S.Chekanov
+**/
+
 class KT
 {
 
@@ -107,8 +105,6 @@ public:
 	/// Print the kT jets for debugging.
 	/// </summary>
 	virtual void printJets();
-
-
 
 private:
 	virtual double phiAngle(double phi);

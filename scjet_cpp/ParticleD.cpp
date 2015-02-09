@@ -1,3 +1,6 @@
+// A simple particle class to keep a particle or jet
+// S.Chekanov
+
 #include "ParticleD.h"
 
 ParticleD::ParticleD()
@@ -172,37 +175,31 @@ double ParticleD::e()
 	return energy;
 }
 
-//JAVA TO C++ CONVERTER NOTE: The variable px was renamed since C++ does not allow variables with the same name as methods:
 void ParticleD::setPx(double m_px)
 {
 	this->m_px = m_px;
 }
 
-//JAVA TO C++ CONVERTER NOTE: The variable py was renamed since C++ does not allow variables with the same name as methods:
 void ParticleD::setPy(double m_py)
 {
 	this->m_py = m_py;
 }
 
-//JAVA TO C++ CONVERTER NOTE: The variable pz was renamed since C++ does not allow variables with the same name as methods:
 void ParticleD::setPz(double m_pz)
 {
 	this->m_pz = m_pz;
 }
 
-//JAVA TO C++ CONVERTER NOTE: The variable rapidity was renamed since C++ does not allow variables with the same name as methods:
 void ParticleD::setRapidity(double m_rapidity)
 {
 	this->m_rapidity = m_rapidity;
 }
 
-//JAVA TO C++ CONVERTER NOTE: The variable phi was renamed since C++ does not allow variables with the same name as methods:
 void ParticleD::setPhi(double m_phi)
 {
 	this->m_phi = m_phi;
 }
 
-//JAVA TO C++ CONVERTER NOTE: The variable et2 was renamed since C++ does not allow variables with the same name as methods:
 void ParticleD::setEt2(double m_et2)
 {
 	this->m_et2 = m_et2;
@@ -234,7 +231,6 @@ void ParticleD::add(ParticleD *a, int index)
 	consts.push_back(int(index));
 }
 
- 
 bool ParticleD::operator<(ParticleD& score) const
 {
   if(m_et2 < score.getEt2())

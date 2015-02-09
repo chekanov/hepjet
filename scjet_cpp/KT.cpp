@@ -7,7 +7,7 @@
 #include <algorithm>
 
 using namespace std;
-const double PI2 = 6.283185307;
+const double PI2 = 6.28318530716;
 
 
 bool comp(ParticleD* rhs1, ParticleD* rhs2) {
@@ -104,14 +104,14 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
         while (Nstep > 0) { 
                 int j1 = 0;
                 int j2 = 0;
-                double min12 = 10e18;
+                double min12 = 1e+64;
                 //
                 // find smallest d12.
                 //
                 for (int i = 0; i < size-1; i++) { 
-                        if (is_consider[i] == false) continue; 
+                        if (!is_consider[i]) continue; 
                         for (int j = i + 1; j < size; j++) {  
-                                if (is_consider[j] == false) continue; 
+                                if (!is_consider[j]) continue; 
                                 if (ktdistance12[i][j] < min12) { 
                                         min12 = ktdistance12[i][j];
                                         j1 = i;
@@ -122,9 +122,9 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
                 // find min distance to the beam
                 int km = 0;
-                double min1 = 10e18;
+                double min1 = 1e+64;
                 for (int i = 0; i < size; i++) { 
-                        if (is_consider[i] == false) continue; 
+                        if (!is_consider[i]) continue; 
                         if (ktdistance1[i] < min1)
                         {
                                 min1 = ktdistance1[i];
@@ -132,9 +132,8 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
                         }
                 }
 
-                // remove from consideration pair
-                if (min12 > min1)
-                {
+                // make the decision about this particle 
+                if (min12 > min1) {   // add this particle to the jet 
                         is_consider[km] = false;
                         Nstep--;
                         ParticleD *pj = static_cast<ParticleD*>(list[km]);
@@ -143,20 +142,19 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
                                 jets.push_back(pj); // fill jets
                                 // System.out.println(pj.getPt() + " " + minpt);
                         }
-                }
-                else {   // when min1min12< combine 
+
+                } else {   // merge particles  
 
                         ParticleD *p1 = static_cast<ParticleD*>(list[j1]);
                         ParticleD *p2 = static_cast<ParticleD*>(list[j2]);
-                        if (j1 != j2)  p1->add(p2,j2); // also keeps an index
+                        if (j1 != j2)  p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2 
                         Nstep--;
-                        list[j1] = p1; // replace with p1+p2
-                        // list.remove(j2); // remove softest
-                        is_consider[j2] = false; // remove softest
+                        list[j1] = p1; // replace with p1=p1+p2
+                        is_consider[j2] = false; // p2, but keep in the list 
                         // recalculate distance for this particle
                         ktdistance1[j1] = getKtDistance1(p1);
                         for (int i = 0; i < size; i++) { 
-                                if (is_consider[i] == false) continue;  
+                                if (!is_consider[i]) continue;  
                                 ParticleD *pp1 = static_cast<ParticleD*>(list[i]);
                                 ktdistance12[j1][i] = getKtDistance12(p1, pp1);
                         }
