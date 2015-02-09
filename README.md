@@ -13,7 +13,8 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 FastJet and KtJet C++ codes used by this library are taken  from the orinal <a href="http://fastjet.fr/">FastJet</a> and <a href="https://ktjet.hepforge.org/">KtJet</a> web pages. 
 SCjet is a light-weight implementation of the kT/anti-kT algorithms for jet validation used by the 
 <a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
-More details <a href="https://github.com/chekanov/hephysics">HepPhysics</a>. 
+More details can be found in <a href="https://github.com/chekanov/hephysics">HePhysics package</a>. 
+
 
 
 <h2>Benchmark results</h2>
