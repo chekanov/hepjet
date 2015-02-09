@@ -8,7 +8,7 @@
 
 using namespace std;
 const double PI2 = 6.28318530716;
-
+const double PI  = 3.14159265358;
 
 bool comp(ParticleD* rhs1, ParticleD* rhs2) {
           return rhs1->getEt2() > rhs2->getEt2();
@@ -245,6 +245,8 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	double phi1 = a->getPhi();
 	double phi2 = b->getPhi();
 	deltaPhi = phi1 - phi2;
+        if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
+
 	rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
 	esq = 0;
 	if (m_mode == 1)

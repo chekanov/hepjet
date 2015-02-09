@@ -322,6 +322,8 @@ public class KT {
 		double phi1 = a.getPhi();
 		double phi2 = b.getPhi();
 		deltaPhi =  phi1-phi2;
+                if (deltaPhi>Math.PI) deltaPhi=PI2-deltaPhi;
+
 		rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
 		esq = 0;
 		if      (mode==1) esq=Math.min(a.getEt2(), b.getEt2());         // kT
