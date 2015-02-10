@@ -1,0 +1,14 @@
+# Benchmark of FastJet agains SCJet
+# S.Chekanov (ANL) 
+
+# Run this example as:
+make
+make run # run using ./data/single-event.dat
+
+
+# or using manually:
+./benchmark < ../data/single-event.dat
+
+# run using ~650 particles
+./benchmark < ../data/single-event-large.dat
+
