@@ -51,8 +51,8 @@ double ParticleD::et2()
         double pt2 = perp2();
         m_et2 = pt2 == 0 ? 0 : e()*e() * pt2 / (pt2 + pz()*pz());
 	return m_et2;
-       // m_et2=pt2;
-       // return m_et2;
+       //m_et2=pt2;
+       //return m_et2;
 
 }
 
@@ -64,7 +64,7 @@ double ParticleD::et()
 
 double ParticleD::rapidity()
 {
-	m_rapidity = -10e10;
+	m_rapidity = -10e18;
 	if (energy > pz())
 	{
 		m_rapidity = 0.5*log((energy + m_pz) / (energy - m_pz));

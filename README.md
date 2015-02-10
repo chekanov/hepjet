@@ -15,11 +15,14 @@ FastJet and KtJet C++ codes used by this library are taken  from the orinal <a h
 SCjet is a light-weight implementation of the kT/anti-kT algorithms for jet validation used by the 
 <a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
 More details can be found in <a href="https://github.com/chekanov/hephysics">HePhysics package</a>. 
-
+The Java implementation of SCJet is available from the <a href="https://jwork.org/scavis/">SCaVis data-analysis program</a>. 
 
 
 <h2>Benchmark results</h2>
-FastJet is  about a factor 40 faster than SCJet (<b>scjet_cpp</b>) and a factor 160 faster than the Java implementation (<b>scjet_java</b>) of the SCJet.  KtJet and SCJet in C++ have similar runtime performance.  
+FastJet is  about a factor 40 faster than SCJet (<b>scjet_cpp</b>).
+KtJet and SCJet C++ versions have similar runtime performance.  
+The Java implementation (<b>scjet_java</b>) of the SCJet is as fast as the C++ version when using more than one run           
+over events (first run is a factor 4 slower than C++ due to JIT compilation process).
 
 <p>
 </p>

@@ -6,16 +6,10 @@
 
 CXXFLAGS=-O2
 
-all: copy benchmark
-
-copy:
-	cp -fv ../fastjet/fjcore.* .
-	cp -fv ../scjet_cpp/KT.* .
-	cp -fv ../scjet_cpp/ParticleD.* .
+all: benchmark
 
 benchmark: KT.o ParticleD.o benchmark.o fjcore.o
 	$(CXX) $(LDFLAGS) -o $@ $@.o fjcore.o KT.o ParticleD.o
-
 
 run:
 	./benchmark < ../data/single-event.dat
