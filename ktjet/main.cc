@@ -14,6 +14,10 @@
 
 
 using namespace std;
+using namespace KtJet;
+const double PI2=6.2831853071;
+const double PI=3.1415926535;
+
 
 int main(){
   
@@ -34,7 +38,8 @@ int main(){
 
    /** set KtEvent flags */
   int type  = 4; // PP
-  int angle = 2; // deltaR 
+//  int angle = 2; // deltaR 
+  int angle = -2; // deltaR, but anti-kT 
   int recom = 1; // E
   double rparameter = 0.6;
   double ETmin=5.0;
@@ -47,10 +52,10 @@ int main(){
   std::cout << "Number of final state jets: " << ev.getNJets() << std::endl;
 
   /** Retrieve the final state jets from KtEvent sorted by Et*/
-  std::vector<KtJet::KtLorentzVector> jets = ev.getJetsEt();
+  std::vector<KtLorentzVector> jets = ev.getJetsEt();
 
   /** Print out jets 4-momentum and Pt */
-  std::vector<KtJet::KtLorentzVector>::const_iterator itr = jets.begin();
+  std::vector<KtLorentzVector>::const_iterator itr = jets.begin();
 
 /*
   for( ; itr != jets.end() ; ++itr) {
@@ -66,20 +71,23 @@ int main(){
 */
 
   tm.stop();
-  std::cout << "Final KtJet calculations (ms):" << tm.duration() << std::endl;
 
   // label the columns
-  printf("%5s %15s %15s %15s\n","jet #", "rapidity", "phi", "pt");
+  printf("%5s %15s %15s %15s %7s\n","jet #", "rapidity", "phi", "pt", "const");
 
   // print out the details for each jet
   for (unsigned int i = 0; i < jets.size(); i++) {
     double et=jets[i].perp();
+    int cons=jets[i].getNConstituents();
     if (et<ETmin) continue;
-    printf("%5u %15.8f %15.8f %15.8f\n",
-           i, jets[i].rapidity(), jets[i].phi(),
-           jets[i].perp());
+    double phi=jets[i].phi();
+    if (phi<PI) phi=PI2+phi;
+    printf("%5u %15.8f %15.8f %15.8f %7d\n",
+           i, jets[i].rapidity(), phi,
+           jets[i].perp(),cons);
   }
 
+  std::cout << "Final KtJet++ calculation :" << tm.duration() << " ms" << std::endl;
 
   return 0;
 }

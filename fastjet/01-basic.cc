@@ -60,7 +60,7 @@ int main(){
   while (cin >> px >> py >> pz >> E) {
     // create a fjcore::PseudoJet with these components and put it onto
     // back of the input_particles vector
-    cout << n++ << endl;
+    // cout << n++ << endl;
     input_particles.push_back(fjcore::PseudoJet(px,py,pz,E)); 
   }
   
@@ -74,7 +74,7 @@ int main(){
   // a jet algorithm with a given radius parameter
   //----------------------------------------------------------
   double R = 0.6;
-  fjcore::JetDefinition jet_def(fjcore::antikt_algorithm, R);
+ fjcore::JetDefinition jet_def(fjcore::antikt_algorithm, R);
 // fjcore::JetDefinition jet_def(fjcore::kt_algorithm, R);
 
 
@@ -98,17 +98,18 @@ int main(){
   cout << "Ran " << jet_def.description() << endl;
 
   tm.stop();
-  std::cout << "Final fastjet calculations (ms):" << tm.duration() << std::endl;
 
   // label the columns
-  printf("%5s %15s %15s %15s\n","jet #", "rapidity", "phi", "pt");
+  printf("%5s %15s %15s %15s\n","jet #", "rapidity", "phi", "pt",  "n const");
  
   // print out the details for each jet
   for (unsigned int i = 0; i < inclusive_jets.size(); i++) {
-    printf("%5u %15.8f %15.8f %15.8f\n",
+    vector<fjcore::PseudoJet> constituents = inclusive_jets[i].constituents();
+    printf("%5u %15.8f %15.8f %15.8f %8u\n",
 	   i, inclusive_jets[i].rap(), inclusive_jets[i].phi(),
-	   inclusive_jets[i].perp());
+	   inclusive_jets[i].perp(),constituents.size());
   }
 
+  std::cout << "Final fastjet calculation :" << tm.duration() << " ms " << std::endl;
   return 0;
 }

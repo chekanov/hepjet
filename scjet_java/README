@@ -1,6 +1,5 @@
-# How to run using KT jet using java:
+# How to run the KT jet using Java:
 # S.Chekanov (ANL) 
-
 
 # compile
 javac *.java

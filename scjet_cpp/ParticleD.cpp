@@ -48,9 +48,13 @@ double ParticleD::eta()
 
 double ParticleD::et2()
 {
-        double pt2 = perp2();
-        m_et2 = pt2 == 0 ? 0 : e()*e() * pt2 / (pt2 + pz()*pz());
-	return m_et2;
+       // double pt2 = perp2();
+       // m_et2 = pt2 == 0 ? 0 : e()*e() * pt2 / (pt2 + pz()*pz());
+       //	return m_et2;
+
+        m_et2 = perp2(); 
+        return m_et2;
+ 
        // m_et2=pt2;
        // return m_et2;
 
@@ -164,9 +168,8 @@ double ParticleD::phi()
 		return 0.0;
 	}
 	m_phi = atan2(m_py,m_px);
-	if (m_phi < 0)
-		m_phi = PI2 + m_phi;
-
+	//if (m_phi < 0)
+        //  	m_phi = PI2 + m_phi;
 	return m_phi;
 }
 

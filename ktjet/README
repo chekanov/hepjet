@@ -1,5 +1,6 @@
 # This benchmark used KTJet C++ from https://ktjet.hepforge.org/ 
 # It also includes a part of CLHEP to compile KtJet
+# The code was modified to run anti-kT jets.
 # S.Chekanov
 
 make     # compile

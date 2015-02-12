@@ -1,8 +1,10 @@
-# This example run SCjet C++ algorithm using an input data
+# How to run a C++ code for KT algorithms taken from NLOjet++:
 # S.Chekanov (ANL) 
 
 make
 make run # runs using ../data/single-event.dat
+
+
 
 # Or using manually:
 # standard file..

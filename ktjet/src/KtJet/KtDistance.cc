@@ -5,12 +5,19 @@
 #include <vector>
 #include <string>
 #include <iostream>
+
+
+bool isAntiKT=false;
+
+
 namespace KtJet {
 
 
 KtDistance* getDistanceScheme(int angle, int collision_type) {
+  if (angle==-2) isAntiKT=true;
+  if (isAntiKT) std::cout << "| S.Chekanov: This is anti-kT mode for DeltaR |" << std::endl;
   if (angle == 1)      return new KtDistanceAngle(collision_type);
-  else if( angle == 2) return new KtDistanceDeltaR(collision_type);
+  else if( std::fabs(angle) == 2) return new KtDistanceDeltaR(collision_type);
   else if (angle == 3) return new KtDistanceQCD(collision_type);
   else{
     std::cout << "WARNING, unreconised distance scheme specified!" << std::endl;
@@ -19,7 +26,7 @@ KtDistance* getDistanceScheme(int angle, int collision_type) {
   }
 }
 
-KtDistanceAngle::KtDistanceAngle(int collision_type) : m_type(collision_type), m_name("angle") {}
+KtDistanceAngle::KtDistanceAngle(int collision_type) : m_type(collision_type),  m_name("angle") {}
   //KtDistanceAngle::~KtDistanceAngle() {}
 std::string KtDistanceAngle::name() const {return m_name;}
 
@@ -62,6 +69,7 @@ KtDistanceDeltaR::KtDistanceDeltaR(int collision_type) : m_type(collision_type),
 std::string KtDistanceDeltaR::name() const {return m_name;}
 
 KtFloat KtDistanceDeltaR::operator()(const KtLorentzVector & a) const {
+  if (isAntiKT) return 1.0/a.perp2();
   return (m_type==1) ? -1 : a.perp2(); // If e+e-, no beam remnant, so result will be ignored anyway
 }
 
@@ -71,6 +79,7 @@ KtFloat KtDistanceDeltaR::operator()(const KtLorentzVector & a, const KtLorentzV
   deltaPhi = phiAngle(a.phi()-b.phi());
   rsq = deltaEta*deltaEta + deltaPhi*deltaPhi;
   esq = std::min(a.perp2(),b.perp2());
+  if (isAntiKT)   esq = std::min(1.0/a.perp2(),1.0/b.perp2()); 
   kt = esq*rsq;
   return kt;
 }

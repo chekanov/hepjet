@@ -8,6 +8,7 @@
 #include <cstdio>   
 #include "ParticleD.h"  
 #include "KT.h"   
+#include "Timer.h"
 
 using namespace std;
 
@@ -23,10 +24,29 @@ int main(){
   }
 
    cout << "Reading " << input_particles.size() << " particles" << endl; 
-   // build anti-kt jets with R=0.6
-   KT* jet= new KT(0.6, 1, -1, 5.0);
-   jet->setDebug(true);
-   jet->buildJets(input_particles);
+
+  Timer tm;
+  tm.start();
+
+  // build anti- jets with R=0.6
+  KT* jet= new KT(0.6, 1, -1, 5.0);
+  jet->setDebug(false);
+  jet->buildJets(input_particles);
+  vector<ParticleD*> cjets=jet->getJetsSorted();
+  tm.stop();
+
+  cout << "Final output:" << endl;
+  printf("%5s %15s %15s %15s %8s\n","jet #", "rapidity", "phi", "pt", " const");
+  for (unsigned int i = 0; i < cjets.size(); i++) {
+     ParticleD *lp = cjets[i];
+     //double phi = lp->phi();
+    std::vector<int> con = lp->getConstituents();
+    printf("%5u %15.8f %15.8f %15.8f %8d\n",
+           i, cjets[i]->rapidity(), cjets[i]->phi(),
+           cjets[i]->et(), (int)con.size());
+  }
+
+   std::cout << "Final SCjet calculation :" << tm.duration() << " ms " << std::endl;
 
   return 0;
 }

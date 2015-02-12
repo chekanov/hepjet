@@ -1,4 +1,4 @@
-# Compile scjet example
+# Compile SCjet example
 # S.Chekanov (ANL)  
 
 CXXFLAGS= -O2 -Wall -fPIC
