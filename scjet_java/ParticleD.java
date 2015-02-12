@@ -18,7 +18,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 	private double px,py,pz;
 	private double energy;
 	private final double PI2 = Math.PI * 2;
-	private double phi,et2,rapidity;
+	private double phi,pt2,rapidity;
 	private DecimalFormat formatter = new DecimalFormat("0.###E0");
 	private ArrayList<Integer> consts;
 
@@ -46,6 +46,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 		this.energy = energy;
 		cachePhiRapidity();
 		consts = new ArrayList<Integer>();
+                consts.add(new Integer(-1));
 	}
 
 	/**
@@ -84,8 +85,8 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 	* Compute transverse energy squared.
 	*/
 	public double et2()  {
-		double pt2 = perp2();
-		et2= pt2 == 0 ? 0 : e()*e() * pt2/(pt2+pz()*pz());
+		double pt2x = perp2();
+		double et2=pt2x == 0 ? 0 : e()*e() * pt2/(pt2x+pz()*pz());
 		return et2;
 	}
 
@@ -166,7 +167,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 		ParticleD tmp = new ParticleD(px,py,pz,energy);
 		tmp.setRapidity(rapidity);
 		tmp.setPhi(phi);
-		tmp.setEt2(et2);
+		tmp.setPt2(pt2);
 		return tmp;
 	}
 
@@ -182,7 +183,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 		String se=formatter.format(energy);
 		String srap=formatter.format(rapidity);
 		String sphi=formatter.format(phi);
-		String set=formatter.format(Math.sqrt(et2));
+		String set=formatter.format(Math.sqrt(pt2));
 		return "px="+spx+" py="+spy+" pz="+spz+" e="+se+" y="+srap+" phi="+sphi+" pt="+set;
 	}
 
@@ -227,21 +228,22 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 
 
 	/**
-	 * Get  cached et**2. 
+	 * Get  cached perp**2. 
 	 * 
-	 * @return et**2. 
+	 * @return perp2. 
 	 */
-	public double getEt2() {
-		return  et2;
+	public double getPt2() {
+		return  pt2;
 	}
 
+ 
 	/**
-	* Get  cached  Et. 
+	* Get  cached  Pt. 
 	* 
 	* @return et transverse energy 
 	*/
-	public double getEt() {
-		return  Math.sqrt(et2);
+	public double getPt() {
+		return  Math.sqrt(pt2);
 	}
 
 
@@ -286,7 +288,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 	{
 		if (px==0) return 0.0;
 		phi=Math.atan2(py,px);
-		if (phi<0)  phi = PI2+phi;
+		//if (phi<0)  phi = PI2+phi;
 		return phi;
 	}
 
@@ -321,27 +323,27 @@ public class ParticleD implements Comparable<ParticleD>, Serializable  {
 		this.phi = phi;
 	}
 
-	public void setEt2(double et2) {
-		this.et2 = et2;
+	public void setPt2(double pt2) {
+		this.pt2 = pt2;
 	}
 
 
 
 	/**
-	* The method precomputers Phi, Rapidity and Et2 and store them. 
-	* Such caching makes faster computations. Use getRapidity(), getPhi(), getEt2() methods
+	* The method precomputers Phi, Rapidity and Pt2 and store them. 
+	* Such caching makes faster computations. Use getRapidity(), getPhi(), getPt2() methods
 	* to return such values. 
 	*      
 	*/
 	public void cachePhiRapidity(){
 		rapidity=rapidity();
 		phi=phi();
-		et2=et2();
+		pt2=perp2();
 	}
 
 
 	/**
-	 * Add to this particle another particle. The method also precomputes rapidity, phi and et2
+	 * Add to this particle another particle. The method also precomputes rapidity, phi and pt2
 	 * for fast retrival using getPhi, getRapidity methods. 
 	 * @param a
 	 */

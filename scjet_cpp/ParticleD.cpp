@@ -6,6 +6,7 @@
 ParticleD::ParticleD()
 {
 	consts = std::vector<int>();
+        consts.push_back(-1); // itself
 }
 
 ParticleD::ParticleD(double m_px, double m_py, double m_pz, double energy)
@@ -16,6 +17,7 @@ ParticleD::ParticleD(double m_px, double m_py, double m_pz, double energy)
 	this->energy = energy;
 	cachePhiRapidity();
 	consts = std::vector<int>();
+        consts.push_back(-1); // itself
 }
 
 void ParticleD::setPxPyPzE(double m_px, double m_py, double m_pz, double energy)
@@ -48,16 +50,9 @@ double ParticleD::eta()
 
 double ParticleD::et2()
 {
-       // double pt2 = perp2();
-       // m_et2 = pt2 == 0 ? 0 : e()*e() * pt2 / (pt2 + pz()*pz());
-       //	return m_et2;
-
-        m_et2 = perp2(); 
-        return m_et2;
- 
-       // m_et2=pt2;
-       // return m_et2;
-
+      double pt2x = perp2();
+      double m_et2 = pt2x == 0 ? 0 : e()*e() * pt2x / (pt2x + pz()*pz());
+      return m_et2;
 }
 
 double ParticleD::et()
@@ -83,7 +78,8 @@ double ParticleD::mag()
 
 double ParticleD::perp2()
 {
-	return (m_px*m_px + m_py*m_py);
+        m_pt2=m_px*m_px + m_py*m_py;
+	return m_pt2;
 }
 
 double ParticleD::perp()
@@ -99,11 +95,11 @@ void ParticleD::setEnergy(double energy)
 
 int ParticleD::compareTo(ParticleD *o)
 {
-	if (perp2() < o->perp2())
+	if (getPt2() < o->getPt2())
 	{
 		return 1;
 	}
-	if (perp2() > o->perp2())
+	if (getPt2() > o->getPt2())
 	{
 		return -1;
 	}
@@ -115,7 +111,7 @@ ParticleD *ParticleD::copy(ParticleD *o)
 	ParticleD *tmp = new ParticleD(m_px,m_py,m_pz,energy);
 	tmp->setRapidity(m_rapidity);
 	tmp->setPhi(m_phi);
-	tmp->setEt2(m_et2);
+	tmp->setPt2(m_pt2);
 	return tmp;
 }
 
@@ -140,14 +136,14 @@ double ParticleD::getRapidity()
 	return m_rapidity;
 }
 
-double ParticleD::getEt2()
+double ParticleD::getPt2()
 {
-	return m_et2;
+	return m_pt2;
 }
 
-double ParticleD::getEt()
+double ParticleD::getPt()
 {
-	return sqrt(m_et2);
+	return sqrt(m_pt2);
 }
 
 double ParticleD::getPhi()
@@ -203,16 +199,16 @@ void ParticleD::setPhi(double m_phi)
 	this->m_phi = m_phi;
 }
 
-void ParticleD::setEt2(double m_et2)
+void ParticleD::setPt2(double m_pt2)
 {
-	this->m_et2 = m_et2;
+	this->m_pt2 = m_pt2;
 }
 
 void ParticleD::cachePhiRapidity()
 {
 	m_rapidity = rapidity();
 	m_phi = phi();
-	m_et2 = et2();
+	m_pt2 = perp2();
 }
 
 void ParticleD::add(ParticleD *a)
@@ -236,9 +232,9 @@ void ParticleD::add(ParticleD *a, int index)
 
 bool ParticleD::operator<(ParticleD& score) const
 {
-  if(m_et2 < score.getEt2())
+  if(m_pt2 < score.getPt2())
     return true;      
-  else if (m_et2 == score.getEt2())
+  else if (m_pt2 == score.getPt2())
     return true;
   else return false;
 }

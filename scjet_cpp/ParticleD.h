@@ -29,7 +29,7 @@ private:
 	double m_px, m_py, m_pz;
 	double energy;
 	static const double PI2 = 6.28318530716;
-	double m_phi, m_et2, m_rapidity;
+	double m_phi, m_pt2, m_rapidity;
 	std::vector<int> consts;
         bool operator<(ParticleD& score) const;
 
@@ -79,6 +79,7 @@ public:
 	double perp();
 
 
+
 	void setEnergy(double energy);
 
 
@@ -116,16 +117,16 @@ public:
 
 
 	/// <summary>
-	/// Get  cached et**2. 
+	/// Get  cached pt**2. 
 	/// </summary>
-	/// <returns> et**2.  </returns>
-        double getEt2();
+	/// <returns> pt**2  </returns>
+        double getPt2();
 
 	/// <summary>
-	/// Get  cached  Et. 
+	/// Get  cached  pT. 
 	/// </summary>
-	/// <returns> et transverse energy  </returns>
-	double getEt();
+	/// <returns> pt transverse momentum  </returns>
+	double getPt();
 
 
 	/// <summary>
@@ -162,14 +163,13 @@ public:
 	void setPz(double m_pz);
 
 
-
 	void setRapidity(double m_rapidity);
 
 
 	void setPhi(double m_phi);
 
 
-	void setEt2(double m_et2);
+	void setPt2(double m_pt2);
 
 
 	/// <summary>

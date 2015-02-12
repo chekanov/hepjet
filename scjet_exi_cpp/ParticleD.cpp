@@ -164,8 +164,8 @@ double ParticleD::phi()
 		return 0.0;
 	}
 	m_phi = atan2(m_py,m_px);
-	//if (m_phi < 0)
-        //  	m_phi = PI2 + m_phi;
+	if (m_phi < 0)
+          	m_phi = PI2 + m_phi;
 	return m_phi;
 }
 

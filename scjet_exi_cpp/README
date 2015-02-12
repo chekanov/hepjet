@@ -1,0 +1,14 @@
+# This example run SCjet C++ algorithm using an input data
+# The example shows an ambiguity in the original jet definition: 
+# early jet exit and skipping soft particles
+# S.Chekanov (ANL) 
+
+make
+make run # runs using ../data/single-event.dat
+
+# Or using manually:
+# standard file..
+./main < ../data/single-event.dat
+
+# using large event
+./main < ../data/single-event-large.dat

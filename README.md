@@ -9,6 +9,7 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <b>nlojet</b>        - implementation of kT-jets from NLOjet++ <br>
 <b>scjet_cpp</b>     - SCJet. An alternative implementation of kT-jet / anti-kT clustering in C++<br>
 <b>scjet_java</b>    - implementation of the SCJet jet algorithm in Java. <br>
+<b>scjet_exi_cpp</b> - shows how to make how ambiguity in the  definition create jets exiting too early <br> 
 <b>benchmark</b>    -  compare FastJet and SCJet implementations using the same input.<br>
 <p>
 
@@ -20,10 +21,21 @@ The Java implementation of SCJet is available from the <a href="https://jwork.or
 
 
 <h2>Benchmark results</h2>
-<b>fastjet</b> is  about a factor 40 faster than <b>scjet_cpp</b>.
-<b>ktjet</b> and  <b>scjet_cpp</b> have a similar runtime performance.  <b>nlojet</b> 
-is a 40% faster than  <b>ktjet</b>. 
-The Java implementation (<b>scjet_java</b>) is as fast as the C++ versions when using more than one run           
+
+The benchmarks have been done on Xeon(R) CPU E5520 @ 2.27GHz
+using the default input file (make run). the processing time:
+
+<p>
+fastjet    - 1 msec <br> 
+scjet_cpp - 10 msec <br> 
+scjet_java - 11 msec <br> (after multiple runs) 
+nlojet    - 28 msec <br> 
+ktjet     - 32 msec <br> 
+nlojet    - 28 msec <br> 
+<p>
+
+<b>fastjet</b> is  about a factor 10 faster than <b>scjet_cpp</b>.
+The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than C++ due to JIT compilation process).
 
 <p>
@@ -31,7 +43,7 @@ over events (first run is a factor 4 slower than C++ due to JIT compilation proc
 
 There are some differences in the output jets between different implementations. 
 The difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations 
-is at the level of 2-10% for transverse momentum of subleading jets. 
+is at the level of 2-10% for transverse momentum of sub-leading low-pT jets . 
 The difference between <b>nlojet</b> and  <b>fastjet</b> is also at the level of a few percents. 
 No difference is found between <b>fastjet</b> and  <b>ktjet</b> implementations. 
 

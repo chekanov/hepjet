@@ -10,6 +10,8 @@
 #include "ParticleD.h"
 #include "KT.h"
 
+const double PI2 = 6.28318530716;
+
 using namespace std;
 
 /// an example program showing how to use fastjet
@@ -79,14 +81,18 @@ int main(){
    // build anti-kt jets with R=0.6
    cout << "\nBuilding SCJet for comparison.." << endl; 
    KT* jet= new KT(R, 1, -1, ptmin);
-   jet->setDebug(false);
+   jet->setDebug(true);
    jet->buildJets(input_particles2);
    vector<ParticleD*> cjets=jet->getJetsSorted(); 
    printf("%5s %15s %15s %15s\n","jet #", "rapidity", "phi", "pt");
    for (unsigned int i = 0; i < cjets.size(); i++) {
+
+   double phi = cjets[i]->phi();
+   if (phi < 0) phi = PI2 + phi;
+
     printf("%5u %15.8f %15.8f %15.8f\n",
-           i, cjets[i]->rapidity(), cjets[i]->phi(),
-           cjets[i]->et());
+           i, cjets[i]->rapidity(), phi,
+           cjets[i]->perp());
   }
 
   int xmax=inclusive_jets.size();
@@ -94,9 +100,13 @@ int main(){
 
   cout << "\nRelative difference between FastJet and CJet (%)" << endl;
   for (unsigned int i = 0; i < inclusive_jets.size(); i++) {
+
+   double phi = cjets[i]->phi();
+   if (phi < 0) phi = PI2 + phi;
+
       double x1=(double)(100*(inclusive_jets[i].rap()-cjets[i]->rapidity())/inclusive_jets[i].rap());
-      double x2=(double)(100*(inclusive_jets[i].phi()-cjets[i]->phi())/inclusive_jets[i].phi());
-      double x3=(double)(100*(inclusive_jets[i].perp()-cjets[i]->et())/inclusive_jets[i].perp());
+      double x2=(double)(100*(inclusive_jets[i].phi()-phi)/inclusive_jets[i].phi());
+      double x3=(double)(100*(inclusive_jets[i].perp()-cjets[i]->perp())/inclusive_jets[i].perp());
       printf("%5u %15.8f %15.8f  %15.8f \n", i, x1,x2,x3); 
   }
    

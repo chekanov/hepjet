@@ -10,8 +10,6 @@
 #include "KT.h"   
 #include "Timer.h"
 
-const double PI2 = 6.28318530716;
-
 using namespace std;
 
 int main(){
@@ -32,7 +30,7 @@ int main(){
 
   // build anti- jets with R=0.6
   KT* jet= new KT(0.6, 1, -1, 5.0);
-  jet->setDebug(true);
+  jet->setDebug(false);
   jet->buildJets(input_particles);
   vector<ParticleD*> cjets=jet->getJetsSorted();
   tm.stop();
@@ -40,13 +38,12 @@ int main(){
   cout << "Final output:" << endl;
   printf("%5s %15s %15s %15s %8s\n","jet #", "rapidity", "phi", "pt", " const");
   for (unsigned int i = 0; i < cjets.size(); i++) {
-    ParticleD *lp = cjets[i];
-    double phi = lp->phi();
-   if (phi < 0) phi = PI2 + phi; 
+     ParticleD *lp = cjets[i];
+     //double phi = lp->phi();
     std::vector<int> con = lp->getConstituents();
     printf("%5u %15.8f %15.8f %15.8f %8d\n",
-           i, cjets[i]->rapidity(), phi,
-           cjets[i]->perp(), (int)con.size());
+           i, cjets[i]->rapidity(), cjets[i]->phi(),
+           cjets[i]->et(), (int)con.size());
   }
 
    std::cout << "Final SCjet calculation :" << tm.duration() << " ms " << std::endl;
