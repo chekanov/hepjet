@@ -25,19 +25,19 @@ The Java implementation of SCJet is available from the <a href="https://jwork.or
 The benchmarks have been done on Xeon(R) CPU E5520 @ 2.27GHz
 using the default input file (make run). the processing time:
 
-<p>
-fastjet    - 1 msec <br> 
-scjet_cpp - 10 msec <br> 
-scjet_java - 11 msec <br> (after multiple runs) 
-nlojet    - 28 msec <br> 
-ktjet     - 32 msec <br> 
-nlojet    - 28 msec <br> 
-<p>
+ <ul>
+  <li>fastjet    - 1 msec</li>
+  <li>scjet_cpp - 10 msec</li>
+  <li>scjet_java - 11 msec (after multiple runs)</li>
+  <li>nlojet    - 28 msec</li>
+  <li>ktjet     - 32 msec</li>
+  <li>nlojet    - 28 msec</li>
+</ul> 
 
-<b>fastjet</b> is  about a factor 10 faster than <b>scjet_cpp</b>.
+In summary: <b>fastjet</b> is  about a factor 10 faster than <b>scjet_cpp</b>.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than C++ due to JIT compilation process).
-
+Other similar algorithms are slower.
 <p>
 </p>
 
