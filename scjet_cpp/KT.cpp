@@ -267,13 +267,13 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	double phi1 = a->getPhi();
 	double phi2 = b->getPhi();
 	//deltaPhi = phiAngle(phi2 - phi1);
-        //deltaPhi = phi2 - phi1;
-        //if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
-        //if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
-
         deltaPhi = phi2 - phi1;
-        if(deltaPhi >= PI) deltaPhi = std::fmod(PI+deltaPhi, PI2) - PI;
-        else if(deltaPhi < -PI) deltaPhi = -std::fmod(PI-deltaPhi, PI2) + PI;
+        if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
+        if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
+
+        //deltaPhi = phi2 - phi1;
+        //if(deltaPhi >= PI) deltaPhi = std::fmod(PI+deltaPhi, PI2) - PI;
+        //else if(deltaPhi < -PI) deltaPhi = -std::fmod(PI-deltaPhi, PI2) + PI;
 
 
 	rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);

@@ -133,9 +133,9 @@ public class KT {
 		}
 
 		ktdistance12 = new double[size][size];
-		for (int i = 0; i < size - 1; i++) {
+		for (int i = 0; i<size-1; i++) {
 			ParticleD p1 = (ParticleD)list.get(i);
-			for (int j = i + 1; j < size; j++) {
+			for (int j = i+1; j < size; j++) {
 				ParticleD p2 = (ParticleD) list.get(j);
 				ktdistance12[i][j] = getKtDistance12(p1, p2);
 
@@ -158,7 +158,7 @@ public class KT {
 			if (j1 ==-1) {
 				for (int i = 0; i < size-1; i++) {
 					if (is_consider[i]<=0) continue;
-					for (int j = i + 1; j < size; j++) {
+					for (int j = i+1; j < size; j++) {
 						if (is_consider[j]<=0) continue;
 						if (ktdistance12[i][j] < min12) {
 							min12 = ktdistance12[i][j];
@@ -201,13 +201,13 @@ public class KT {
 				if (j1 != j2) p1.add(p2,j2); // also keeps an index
 				Nstep--;
 				list.set(j1, p1); // replace with p1+p2
-				is_consider[j2] = 0; // remove softest
+				is_consider[j2] = 0; 
 				is_consider[j1]=is_consider[j1]+1;
 				// recalculate distance for this particle
 				ktdistance1[j1]  = getKtDistance1(p1);
 				for (int i = 0; i < size; i++) {
-					if (is_consider[i]<=0)  continue;
-					ParticleD pp1 = (ParticleD) list.get(i);
+					if (is_consider[i]<=0 || i==j1)  continue;
+					ParticleD pp1 = (ParticleD)list.get(i);
 					ktdistance12[j1][i] = getKtDistance12(p1, pp1);
 				}
 
@@ -331,9 +331,8 @@ public class KT {
 		double phi1 = a.getPhi();
 		double phi2 = b.getPhi();
 		deltaPhi = phi2 - phi1;
-		//deltaPhi = phiAngle(phi2 - phi1);
-		if(deltaPhi >= Math.PI) deltaPhi = ((Math.PI+deltaPhi)%PI2) - Math.PI;
-		else if(deltaPhi < -Math.PI) deltaPhi = ((Math.PI-deltaPhi)%PI2) + Math.PI;
+                if (deltaPhi>Math.PI) deltaPhi=PI2-deltaPhi;
+                if (deltaPhi<-Math.PI) deltaPhi=PI2+deltaPhi;
 		rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
 		esq = 0;
 		if      (mode==1) esq=Math.min(a.getPt2(), b.getPt2());         // kT
