@@ -171,13 +171,14 @@ public class KT {
 		}
 
 		int Nstep = size;
-		int  iter=0;
+		int iter=0;
+                boolean merged=false;
 
 		while (Nstep > 0) {
 
 			min12 = Double.MAX_VALUE;
 			// this is after reseting to a new jet
-			if (j1 == -1) {
+			if (!merged) {
 				for (int i = 0; i < size - 1; i++) {
 					if (is_consider[i] <= 0)
 						continue;
@@ -192,7 +193,6 @@ public class KT {
 					}
 				}
 			} else {
-
 				// find another minimum around this jet when j1>0
 				for (int j = 0; j < size; j++) {
 					if (is_consider[j] <= 0 || j == j1)
@@ -206,18 +206,17 @@ public class KT {
 
 			} // end of min finding
 
-			if (j1 == -1 && Nstep == 1)		break;
-		
+                         if (merged==false && Nstep==1) break;
+                        // System.out.println(Nstep+" "+j1);
 
 			// find min distance to the beam
 			double min1 = ktdistance1[j1];
 			if (ktdistance1[j2] < min1) {
 				min1 = ktdistance1[j2];
 			}
-			;
 
 			// make the decision about this particle
-			boolean merged = false;
+			merged = false;
 			if (min12 < min1)
 				merged = true;
 
@@ -244,7 +243,6 @@ public class KT {
 			if (!merged) { // add this to the jet
 				is_consider[j1] = -1;
 				ParticleD pj = (ParticleD) list.get(j1);
-				j1 = -1;
 				Nstep--;
 				if (pj.getPt() > minpt) {
 					jets.add(pj); // fill jets
