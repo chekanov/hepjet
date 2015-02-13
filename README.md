@@ -9,7 +9,7 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <b>nlojet</b>        - implementation of kT-jets from NLOjet++ <br>
 <b>scjet_cpp</b>     - SCJet. An alternative implementation of kT-jet / anti-kT clustering in C++<br>
 <b>scjet_java</b>    - implementation of the SCJet jet algorithm in Java. <br>
-<b>scjet_exi_cpp</b> - shows how to make how ambiguity in the  definition create jets exiting too early <br> 
+<b>scjet_exi_cpp</b> - illustrates an ambiguity when proto-jet exit too early. <br> 
 <b>benchmark</b>    -  compare FastJet and SCJet implementations using the same input.<br>
 <p>
 All algorithms run the anti-kT jet algorithm. One can also run the standard kT and Cambridge/Aachen jet algorithms. 
