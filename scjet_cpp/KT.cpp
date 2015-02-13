@@ -205,16 +205,18 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 		}
 
 
-		if (m_debug) {
-			cout << "## Iteration:" << iter++ << endl;
-			for (int i = 0; i < size; i++) {
-				ParticleD *p1 = list[i];
-				std::string mess="(removed)";
-				if (is_consider[i]==-1) mess="!final-jet!";
-				if (is_consider[i]>1) mess="(proto-jet)";
-				cout << i << "  E=" << p1->e() << " " << mess << endl;
-			}
-		}
+
+                if (m_debug) {
+                        cout << "## Iteration:" << iter++ << endl;
+                        for (int i = 0; i < size; i++) {
+                                ParticleD *p1 = list[i];
+                                std::string mess="original";
+                                if (is_consider[i]==-1) mess="!final-jet!";
+                                if (is_consider[i]>1) mess="(proto-jet)";
+                                if (is_consider[i]==0) mess="(removed)";
+                                cout << i << "  E=" << p1->e() << " " << mess << endl;
+                        }
+                }
 
 
 
