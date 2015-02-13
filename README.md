@@ -35,14 +35,15 @@ using the default input file (make run). the processing time:
 
 In summary: <b>fastjet</b> is  about a factor 10 faster than <b>scjet_cpp</b>.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
-over events (first run is a factor 4 slower than C++ due to JIT compilation process).
+over events (first run is a factor 4 slower than for the C++ version due to JIT compilation).
 Other similar algorithms are slower.
 <p>
 </p>
 
 There are some differences in the output jets between different implementations. 
 The difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations 
-is at the level of 2% for transverse momentum of sub-leading low-pT jets. 
+is at the level of 2% for transverse momentum of sub-leading jets (Nr>3) due to an ambiguity
+of merging some low-pT particles. 
 The difference between <b>nlojet</b> and  <b>fastjet</b> is also at the level of a few percents. 
 No difference is found between <b>fastjet</b> and  <b>ktjet</b> implementations. 
 
