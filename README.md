@@ -30,7 +30,6 @@ using the default input file (make run). the processing time:
   <li>scjet_java - 11 msec (after multiple runs)</li>
   <li>nlojet    - 28 msec</li>
   <li>ktjet     - 32 msec</li>
-  <li>nlojet    - 28 msec</li>
 </ul> 
 
 In summary: <b>fastjet</b> is  about a factor 10 faster than <b>scjet_cpp</b>.
