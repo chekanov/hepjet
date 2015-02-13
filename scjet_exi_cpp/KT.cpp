@@ -5,18 +5,22 @@
 #include "Timer.h"
 #include <vector>
 #include <algorithm>
+#include <limits>
+#include <cmath>
 
 using namespace std;
-const double PI2 = 6.28318530716;
-const double PI  = 3.14159265358;
+const double PI2 = 2*M_PI;
+const double PI  = M_PI;
+
+using namespace std;
 
 bool comp(ParticleD* rhs1, ParticleD* rhs2) {
-          return rhs1->getPt2() > rhs2->getPt2();
+	return rhs1->getPt2() > rhs2->getPt2();
 };
 
 
 
-/** @brief Initialize calculations of the KT-type of jets 
+/** @brief Initialize calculations of the KT-type of jets
     @param R distance parameter
     @param recom recombination mode. Only recom=1 is supported (E-scheme, p=p1+p2) 
     @param mode defines the algorithm. 1 means KT, -1 is anti-KT, 0 is Cambridge/Aachen
@@ -31,7 +35,7 @@ KT::KT(double R, int recom, int mode, double minpt)
 	m_debug = false;
 	m_minpt = minpt;
 	m_mode = mode;
-        if (mode == 1)
+	if (mode == 1)
 	{
 		std::cout << "Longitudinally invariant kt algorithm" << std::endl;
 	}
@@ -53,7 +57,7 @@ KT::KT(double R, int recom, int mode, double minpt)
 }
 
 
-/** @brief Main method to build  KT-type of jets 
+/** @brief Main method to build  KT-type of jets
     @param list list with particles 
     @return list with unsorted jets 
     @author S.Chekanov 
@@ -62,16 +66,16 @@ KT::KT(double R, int recom, int mode, double minpt)
 std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 {
 
-        Timer tm;
-        jets = std::vector<ParticleD*>();
+	Timer tm;
+	jets = std::vector<ParticleD*>();
 	int size = list.size();
 
 	if (m_debug)
-	     tm.start();	
+		tm.start();
 
 	double ktdistance1[size];
 	int    is_consider[size]; // 0-ignore, 1-original,  n>1 - merged, -1 - jet
-	for (int m = 0; m < size; m++) { 
+	for (int m = 0; m < size; m++) {
 		is_consider[m] = 1;
 		ParticleD *p1 = static_cast<ParticleD*>(list[m]);
 		ktdistance1[m] = getKtDistance1(p1);
@@ -80,121 +84,131 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
 
 
-        double ktdistance12[size][size];
-        for (int i = 0; i < size - 1; i++)
-        {
-                ParticleD *p1 = static_cast<ParticleD*>(list[i]);
-                for (int j = i + 1; j < size; j++)
-                {
-                        ParticleD *p2 = static_cast<ParticleD*>(list[j]);
-                        ktdistance12[i][j] = getKtDistance12(p1, p2);
-                        //System.out.println(ktdistance12[i][j]);
-                }
-        }
+	double ktdistance12[size][size];
+	for (int i = 0; i < size - 1; i++)
+	{
+		ParticleD *p1 = static_cast<ParticleD*>(list[i]);
+		for (int j = i + 1; j < size; j++)
+		{
+			ParticleD *p2 = static_cast<ParticleD*>(list[j]);
+			ktdistance12[i][j] = getKtDistance12(p1, p2);
+		}
+	}
 
-        if (m_debug) { 
-               tm.stop();
-               std::cout << "After creating a cache of distances (ms):" << tm.duration() << std::endl;
-               tm.start();
-        }
+	if (m_debug) {
+		tm.stop();
+		std::cout << "After creating a cache of distances (ms):" << tm.duration() << std::endl;
+		tm.start();
+	}
 
+	int Nstep = size;
+	bool merged=false;
+	int j1 = -1;
+	int j2 = -1;
+	int km=-1;
+	int iter=0;
 
-         int Nstep = size;
-        // start loop over all objects
-        while (Nstep > 0) { 
-                int j1 = 0;
-                int j2 = 1;
-                double min12 = 1e+64;
-                //
-                // find smallest d12.
-                //
-                for (int i = 0; i < size-1; i++) { 
-                        if (is_consider[i]<=0) continue; 
-                        for (int j = i + 1; j < size; j++) {  
-                                if (is_consider[j]<=0) continue; 
-                                if (ktdistance12[i][j] < min12) { 
-                                        min12 = ktdistance12[i][j];
-                                        j1 = i;
-                                        j2 = j;
-                                }
-                        }
-                }
+	// start loop over all objects
+	while (Nstep > 0) {
 
-                // find min distance to the beam
-                int km = 0;
-                double min1 = 1e+64;
-/*
-                for (int i = 0; i < size; i++) { 
-                        if (is_consider[i]<=0) continue; 
-                        if (ktdistance1[i] < min1)
-                        {
-                                min1 = ktdistance1[i];
-                                km = i;
-                        }
-                }
-*/
+		// find smallest distances
+		double min12 = std::numeric_limits<double>::max();
+		for (int i = 0; i < size-1; i++) {
+			if (is_consider[i]<=0) continue;
+			for (int j = i + 1; j < size; j++) {
+				if (is_consider[j]<=0) continue;
+				if (ktdistance12[i][j] < min12) {
+					min12 = ktdistance12[i][j];
+					j1 = i;
+					j2 = j;
+				}
+			}
+		}
 
-                km = j1;
-                min1 = ktdistance1[j1];
-                if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];
-                                          km = j2; } 
+		double min1 = std::numeric_limits<double>::max();
+		for (int j = 0; j < size; j++) {
+			if (is_consider[j]<=0) continue;
+			if (ktdistance1[j] < min1) {
+				min1 = ktdistance1[j];
+				km = j;
+			}
+		}
 
-                // make the decision about this particle 
-                bool merged=false;
-                if (min12<min1) merged=true;
+		/*
+		                // find min distance to the beam of the closest
+		                km = j1;
+		                min1 = ktdistance1[j1];
+		                if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];
+		                                          km = j2; } 
+		*/
 
-         
-                 if (merged) {   // merge particles  
-                        ParticleD *p1 = static_cast<ParticleD*>(list[j1]);
-                        ParticleD *p2 = static_cast<ParticleD*>(list[j2]);
-                        if (j1 != j2)  p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2 
-                        Nstep--;
-                        list[j1] = p1; // replace with p1=p1+p2
-                        is_consider[j2] = 0; // p2, but keep in the list 
-                        is_consider[j1]=is_consider[j1]+1;
-                        // recalculate distance for this particle
-                        ktdistance1[j1] = getKtDistance1(p1);
-                        for (int i = 0; i < size; i++) { 
-                                if (is_consider[i]<=0) continue;  
-                                ParticleD *pp1 = static_cast<ParticleD*>(list[i]);
-                                ktdistance12[j1][i] = getKtDistance12(p1, pp1);
-                        }
-
-                }
+		// make the decision about this particle
+		merged=false;
+		if (min12<min1) merged=true;
 
 
-               if (!merged) {   // add this to the jet 
-                        is_consider[km] = -1; // make as a jet
-                        Nstep--;
-                        ParticleD *pj = static_cast<ParticleD*>(list[km]);
-                        if (pj->getPt() > m_minpt)
-                        {
-                                jets.push_back(pj); // fill jets
-                                // System.out.println(pj.getPt() + " " + minpt);
-                        }
+		if (merged) {   // merge particles
+			ParticleD *p1 = static_cast<ParticleD*>(list[j1]);
+			ParticleD *p2 = static_cast<ParticleD*>(list[j2]);
+			if (j1 != j2)  p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2
+			Nstep--;
+			list[j1] = p1; // replace with p1=p1+p2
+			is_consider[j2] = 0; // p2, but keep in the list
+			is_consider[j1]=is_consider[j1]+1;
+			// recalculate distance for this particle
+			ktdistance1[j1] = getKtDistance1(p1);
+			for (int i = 0; i < size; i++) {
+				if (is_consider[i]<=0) continue;
+				ParticleD *pp1 = static_cast<ParticleD*>(list[i]);
+				ktdistance12[j1][i] = getKtDistance12(p1, pp1);
+			}
 
-                } 
-
-
-
-                // end loop
-        }
-
-
-        if (m_debug) { 
-               tm.stop();
-               std::cout << "  --> Final time for calculation (ms):" << tm.duration() << std::endl;
-               tm.start();
-               std::cout << "  --> Nr of jets : " << jets.size() << std::endl;
-               printJets();
-               // sanity test. All particles were merged
-               int nn=0;
-               for (int i = 0; i < size; i++) 
-                        if (!is_consider[i]) nn++; 
-                if (nn != (int)list.size())  std::cout << "!!!! Error! Not all particles were assigned" << list.size() << " done=" << nn << std::endl; 
+		}
 
 
-        }
+		if (!merged) {   // add this to the jet
+			is_consider[km] = -1; // make as a jet
+			Nstep--;
+			ParticleD *pj = static_cast<ParticleD*>(list[km]);
+			if (pj->getPt() > m_minpt)
+			{
+				jets.push_back(pj); // fill jets
+			}
+
+		}
+
+		if (m_debug) {
+			cout << "## Iteration:" << iter++ << endl;
+			for (int i = 0; i < size; i++) {
+				ParticleD *p1 = list[i];
+				std::string mess="original";
+				if (is_consider[i]==-1) mess="!final-jet!";
+				if (is_consider[i]>1) mess="(proto-jet)";
+				if (is_consider[i]==0) mess="(removed)";
+				cout << i << "  E=" << p1->e() << " " << mess << endl;
+			}
+		}
+
+
+		iter++;
+		// end loop
+	}
+
+
+	if (m_debug) {
+		tm.stop();
+		std::cout << "  --> Final time for calculation (ms):" << tm.duration() << std::endl;
+		tm.start();
+		std::cout << "  --> Nr of jets : " << jets.size() << std::endl;
+		printJets();
+		// sanity test. All particles were merged
+		int nn=0;
+		for (int i = 0; i < size; i++)
+			if (!is_consider[i]) nn++;
+		if (nn != (int)list.size())  std::cout << "!!!! Error! Not all particles were assigned: " << list.size() << " done=" << nn << std::endl;
+
+
+	}
 
 	return jets;
 
@@ -207,45 +221,45 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
     @author S.Chekanov 
     @version 1.0 02/02/14
 */
-std::vector<ParticleD*> KT::getJetsSorted() { 
-       sort(jets.begin(), jets.end(), comp);
-       return jets;
+std::vector<ParticleD*> KT::getJetsSorted() {
+	sort(jets.begin(), jets.end(), comp);
+	return jets;
 }
 
 
 /** Print sorted jets
 */
-void KT::printJets() { 
+void KT::printJets() {
 
-        std::vector<ParticleD*> sjets = getJetsSorted();
+	std::vector<ParticleD*> sjets = getJetsSorted();
 
-        std::cout << "# Nr of jets=" << sjets.size() << std::endl;
-        for (unsigned int i = 0; i < sjets.size(); i++)
-        {
-                ParticleD *lp = sjets[i];
-                double phi = lp->phi();
-                std::vector<int> con = lp->getConstituents();
-                if (phi < 0) phi = PI2 + phi; 
-                double srap=lp->getRapidity();
-                double et=lp->getPt();
-                std::cout << "n=" << i << " y=" << srap << " phi=" << phi << " pt=" << et << " const=" << con.size() << std::endl;
+	std::cout << "# Nr of jets=" << sjets.size() << std::endl;
+	for (unsigned int i = 0; i < sjets.size(); i++)
+	{
+		ParticleD *lp = sjets[i];
+		double phi = lp->phi();
+		std::vector<int> con = lp->getConstituents();
+		if (phi < 0) phi = PI2 + phi;
+		double srap=lp->getRapidity();
+		double et=lp->getPt();
+		std::cout << "n=" << i << " y=" << srap << " phi=" << phi << " pt=" << et << " const=" << con.size() << std::endl;
 
-        }
+	}
 
 
 }
 
 double KT::phiAngle(double phi)
 {
-        if (phi > PI2)
-        {
-                phi -= (PI2);
-        }
-        if (phi < -PI2)
-        {
-                phi += (PI2);
-        }
-        return phi;
+	if (phi > PI2)
+	{
+		phi -= (PI2);
+	}
+	if (phi < -PI2)
+	{
+		phi += (PI2);
+	}
+	return phi;
 }
 
 
@@ -256,13 +270,12 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	deltaEta = b->getRapidity() - a->getRapidity();
 	double phi1 = a->getPhi();
 	double phi2 = b->getPhi();
-	//deltaPhi = phiAngle(phi2 - phi1);
-        //if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
-        //if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
-        deltaPhi = phi2 - phi1;
-        if(deltaPhi >= PI) deltaPhi = std::fmod(PI+deltaPhi, PI2) - PI;
-        else if(deltaPhi < -PI) deltaPhi = -std::fmod(PI-deltaPhi, PI2) + PI;
-
+	deltaPhi = phi2 - phi1;
+	if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
+	if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
+	//deltaPhi = phi2 - phi1;
+	//if(deltaPhi >= PI) deltaPhi = std::fmod(PI+deltaPhi, PI2) - PI;
+	//else if(deltaPhi < -PI) deltaPhi = -std::fmod(PI-deltaPhi, PI2) + PI;
 
 	rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
 	esq = 0;
@@ -280,7 +293,7 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	}
 	else
 	{
-		esq = std::min(a->getPt2(), b->getPt2()); // kT (fallback) 
+		esq = std::min(a->getPt2(), b->getPt2()); // kT (fallback)
 	}
 
 	return (esq * rsq / m_R2);

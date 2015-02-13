@@ -3,22 +3,15 @@
 
 #include "ParticleD.h"
 
-ParticleD::ParticleD()
+ParticleD::ParticleD() {}
+
+
+ParticleD::ParticleD(double px, double py, double pz, double ene) : m_px(px), m_py(py), m_pz(pz), energy(ene)
 {
-	consts = std::vector<int>();
-        consts.push_back(-1); // itself
+    cachePhiRapidity();
+    consts.push_back(-1); // itself
 }
 
-ParticleD::ParticleD(double m_px, double m_py, double m_pz, double energy)
-{
-	this->m_px = m_px;
-	this->m_py = m_py;
-	this->m_pz = m_pz;
-	this->energy = energy;
-	cachePhiRapidity();
-	consts = std::vector<int>();
-        consts.push_back(-1); // itself
-}
 
 void ParticleD::setPxPyPzE(double m_px, double m_py, double m_pz, double energy)
 {
@@ -159,13 +152,10 @@ std::vector<int> ParticleD::getConstituents()
 
 double ParticleD::phi()
 {
-	if (m_px == 0)
-	{
-		return 0.0;
-	}
+	if (m_px == 0) return 0.0; 
 	m_phi = atan2(m_py,m_px);
-	if (m_phi < 0)
-          	m_phi = PI2 + m_phi;
+	//if (m_phi < 0)
+        //  	m_phi = PI2 + m_phi;
 	return m_phi;
 }
 
