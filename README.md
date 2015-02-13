@@ -43,7 +43,7 @@ Other similar algorithms are slower.
 
 There are some differences in the output jets between different implementations. 
 The difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations 
-is at the level of 2-10% for transverse momentum of sub-leading low-pT jets . 
+is at the level of 2% for transverse momentum of sub-leading low-pT jets. 
 The difference between <b>nlojet</b> and  <b>fastjet</b> is also at the level of a few percents. 
 No difference is found between <b>fastjet</b> and  <b>ktjet</b> implementations. 
 

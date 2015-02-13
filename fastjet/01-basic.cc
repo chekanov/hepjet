@@ -110,6 +110,21 @@ int main(){
 	   inclusive_jets[i].perp(),constituents.size());
   }
 
+/*
+  vector<fjcore::PseudoJet> cons = inclusive_jets[4].constituents();
+
+  cout << endl;
+  for (unsigned int i = 0; i < cons.size(); i++) {
+  //  printf("%5u %15.8f %15.8f %15.8f\n",
+  //         i, cons[i].rap(), cons[i].phi(),
+  //         cons[i].perp());
+      printf("%15.8f %15.8f %15.8f %15.8f\n",
+           i, cons[i].px(), cons[i].py(),
+           cons[i].pz(),cons[i].e());
+
+  }
+*/
+
   std::cout << "Final fastjet calculation :" << tm.duration() << " ms " << std::endl;
   return 0;
 }

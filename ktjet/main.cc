@@ -81,7 +81,7 @@ int main(){
     int cons=jets[i].getNConstituents();
     if (et<ETmin) continue;
     double phi=jets[i].phi();
-    if (phi<PI) phi=PI2+phi;
+    if (phi<0) phi=PI2+phi;
     printf("%5u %15.8f %15.8f %15.8f %7d\n",
            i, jets[i].rapidity(), phi,
            jets[i].perp(),cons);

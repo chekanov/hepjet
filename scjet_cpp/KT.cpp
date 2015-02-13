@@ -5,10 +5,12 @@
 #include "Timer.h"
 #include <vector>
 #include <algorithm>
+#include <limits>
+#include <cmath>
 
 using namespace std;
-const double PI2 = 6.28318530716;
-const double PI  = 3.14159265358;
+const double PI2 = 2*M_PI;
+const double PI  = M_PI;
 
 bool comp(ParticleD* rhs1, ParticleD* rhs2) {
           return rhs1->getPt2() > rhs2->getPt2();
@@ -71,7 +73,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
         int j1 = -1;
         int j2 = -1;
-        double min12 = 1e+164;
+        double min12 = std::numeric_limits<double>::max();
 
        // *****************************************
        // build a  cache and find first closest pair
@@ -80,16 +82,16 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 	int    is_consider[size]; // 0-ignore, 1-original,  n>1 - merged, -1 - jet
 	for (int m = 0; m < size; m++) { 
 		is_consider[m] = 1;
-		ParticleD *p1 = static_cast<ParticleD*>(list[m]);
+		ParticleD *p1 = list[m];
 		ktdistance1[m] = getKtDistance1(p1);
 	}
 
 
         double ktdistance12[size][size];
         for (int i = 0; i < size - 1; i++) { 
-                ParticleD *p1 = static_cast<ParticleD*>(list[i]);
+                ParticleD *p1 = list[i];
                 for (int j = i + 1; j < size; j++) { 
-                        ParticleD *p2 = static_cast<ParticleD*>(list[j]);
+                        ParticleD *p2 = list[j];
                         ktdistance12[i][j] = getKtDistance12(p1, p2);
                 }
         }
@@ -107,14 +109,29 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
        //  cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
 
+        bool merged=false;
+
+
         // start loop over all objects
         while (Nstep > 0) { 
 
-                min12 = 1e+164;
+                min12 = std::numeric_limits<double>::max();
+
+                /*
+                cout << "Nstep=" << Nstep << endl;
+                for (int i = 0; i < size; i++) { 
+                        ParticleD *p1 = list[i];
+                        cout << i << " is_consider[i]=" << is_consider[i] << " E=" << p1->e() << endl;
+
+                }
+                */
+
+
 
                 // find smallest d12.
                 // this is after reseting to a new jet
-                if (j1 ==-1) { 
+                if (!merged) { 
+
                 for (int i = 0; i < size-1; i++) { 
                         if (is_consider[i]<=0) continue; 
                         for (int j = i + 1; j < size; j++) {  
@@ -127,10 +144,11 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
                         }
                 }
 
+
                 } else {
                   // find another minimum around this jet  when j1>0 
                   for (int j = 0; j < size; j++) {
-                                if (is_consider[j]<=0 || j == j1) continue;
+                                if (is_consider[j]<=0 || j==j1) continue;
                                 if (ktdistance12[j1][j] < min12) {
                                         min12 = ktdistance12[j1][j];
                                         j1 = j1;
@@ -139,44 +157,49 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
                         }
                 } // end of min finding 
 
-                
+                  /*
+                  if (Nstep>2) {
+                    cout << "working on the last unmerged particle " << endl;
+                    cout << "current pair=" << j1 << " " << j2 << endl;
+                  }
+                  */
 
-                if (j1==-1 && Nstep==1) { break; } 
+                if (merged==false && Nstep==1) break;
+
 
                 // find min distance to the beam
                 double min1 = ktdistance1[j1];
                 if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
-
+                
 
                 // make the decision about this particle 
-                bool merged=false;
+                merged=false;
                 if (min12<min1) merged=true;
-
          
                  if (merged) {   // merge particles  
-                        // cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
-                        ParticleD *p1 = static_cast<ParticleD*>(list[j1]);
-                        ParticleD *p2 = static_cast<ParticleD*>(list[j2]);
+                        //if (Nstep==1) cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
+                        ParticleD *p1 = list[j1];
+                        ParticleD *p2 = list[j2];
                         if (j1 != j2)  p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2 
                         Nstep--;
                         list[j1] = p1; // replace with p1=p1+p2
-                        is_consider[j2] = 0; // p2, but keep in the list 
+                        is_consider[j2]=0; // p2, but keep in the list 
                         is_consider[j1]=is_consider[j1]+1;
                         // recalculate distance for this particle
                         ktdistance1[j1] = getKtDistance1(p1);
                         for (int i = 0; i < size; i++) { 
                                 if (is_consider[i]<=0) continue;  
-                                ParticleD *pp1 = static_cast<ParticleD*>(list[i]);
+                                ParticleD *pp1 = list[i];
                                 ktdistance12[j1][i] = getKtDistance12(p1, pp1);
                         }
 
                 }
 
 
+              
                if (!merged) {   // add this to the jet 
-                        is_consider[j1] = -1; // make as a jet
-                        ParticleD *pj = static_cast<ParticleD*>(list[j1]);
-                        j1=-1;
+                        is_consider[j1] = -1;
+                        ParticleD *pj = list[j1];
                         Nstep--;
                         if (pj->getPt() > m_minpt)
                         {
@@ -185,10 +208,32 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
                 } 
 
+        } // end loop 
 
 
-                // end loop
-        }
+
+               // attempt to deal with unmeargable particle
+               int ins=-1;
+               for (int i = 0; i < size; i++)
+                        if (is_consider[i]==1) {ins=i;};
+                     //cout << "working on the last unmerged particle " << endl;
+                     ParticleD *p2 = list[ins];
+                     if (m_debug) cout << "Unmergable particle=" << ins << " rap=" << p2->getRapidity() << " phi=" <<  p2->getPhi() << endl;
+                     min12 = std::numeric_limits<double>::max();
+                     for (unsigned int j = 0; j < jets.size(); j++) {
+                                ParticleD *lp = jets[j];
+                                double d=getDistance(p2, lp);
+                                if (d<min12) { j1=j; min12 =d; }; 
+                                }
+                    if (m_debug) cout << "Unmergable distance R=" << min12 << endl;
+                    if (min12<m_R) {
+                           if (m_debug) cout << " --> Particle merged" << endl;
+                           ParticleD *lp = jets[j1];
+                           lp->add(p2,j1);
+                           is_consider[ins] = 0;
+                     }
+
+
 
 
         if (m_debug) { 
@@ -198,11 +243,12 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
                std::cout << "  --> Nr of jets : " << jets.size() << std::endl;
                printJets();
                // sanity test. All particles were merged
-               int nn=0;
+               int nn=0; int ins=-1;
                for (int i = 0; i < size; i++) 
-                        if (is_consider[i]<=0) nn++; 
-                if (nn != (int)list.size()-1)  std::cout << "!!!! Error! Not all particles were assigned : " << list.size() << " done=" << nn << std::endl; 
-
+                        if (is_consider[i]==1) {nn++; ins=i;};
+               if (nn != 0)  { std::cout << "--> ERROR: =" << nn << " particles were not assigned.." << std::endl; 
+                               std::cout << "--> ERROR: particle with ID=" << ins << " is lost!" << std::endl; 
+                             }
 
         }
 
@@ -235,7 +281,7 @@ void KT::printJets() {
                 ParticleD *lp = sjets[i];
                 double phi = lp->phi();
                 std::vector<int> con = lp->getConstituents();
-                if (phi < 0) phi = PI2 + phi; 
+                if (phi < 0) phi = PI + phi; 
                 double srap=lp->getRapidity();
                 double pt=lp->getPt();
                 std::cout << "n=" << i << " y=" << srap << " phi=" << phi << " pt=" << pt << " const=" << con.size() << std::endl;
@@ -298,6 +344,20 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	return (esq * rsq / m_R2);
 }
 
+
+// get deltaR distance
+double KT::getDistance(ParticleD *a, ParticleD *b)
+{
+        double rsq, deltaEta, deltaPhi;
+        deltaEta = b->getRapidity() - a->getRapidity();
+        double phi1 = a->getPhi();
+        double phi2 = b->getPhi();
+        deltaPhi = phi2 - phi1;
+        if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
+        if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
+        rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
+        return sqrt(rsq);
+}
 
 // calculate distance to the beam
 double KT::getKtDistance1(ParticleD *a)

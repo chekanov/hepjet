@@ -131,6 +131,10 @@ public:
 	virtual double getKtDistance1(ParticleD *a);
 
 
+        /// <summary>
+        /// This is the distance in Rapidity-Phi. 
+        virtual double getDistance(ParticleD *a, ParticleD *b);
+
 
 	/// <summary>
 	/// Print debugging information. It shows how much time spend to make jets in ms. </summary>
