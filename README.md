@@ -17,8 +17,7 @@ FastJet and KtJet C++ codes used by this library are taken  from the orinal <a h
 SCjet is a light-weight implementation of the kT/anti-kT algorithms for jet validation used by the 
 <a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
 More details can be found in <a href="https://github.com/chekanov/hephysics">HePhysics package</a>. 
-The Java implementation of SCJet is available from the <a href="https://jwork.org/scavis/">SCaVis data-analysis program</a>. 
-
+The Java implementation of SCJet is available from the <a href="http://jwork.org/scavis/">SCaVis data-analysis</a> program. 
 
 <h2>Benchmark results</h2>
 
