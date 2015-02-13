@@ -255,10 +255,11 @@ public class KT {
                          System.out.println("## Iteration:"+Integer.toString(iter));
                          for (int i = 0; i < size; i++) {
                          ParticleD p1 = (ParticleD) list.get(i);
-                         String mess="(removed)";
+                         String mess="original";
                          if (is_consider[i]==-1) mess="!final-jet!";
                          if (is_consider[i]>1) mess="(proto-jet)";
-                         System.out.println( Integer.toString(i)+"  E="+Double.toString(p1.e())+" "+mess);
+                         if (is_consider[i]==0) mess="(removed)";
+                        System.out.println( Integer.toString(i)+"  E="+Double.toString(p1.e())+" "+mess);
                  }
          }
 
