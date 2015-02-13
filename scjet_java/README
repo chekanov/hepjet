@@ -1,5 +1,13 @@
-# How to run the KT jet using Java:
-# S.Chekanov (ANL) 
+This is an implementation of SCjet jet algorithm in Java
+The code supports kT, anti-kT and C/A jet clustering algorithms.
+Author:  S.Chekanov (ANL) 
+License: GNU public license
+
+Note: Unlike C++ version, we run this algorithm several times
+to find out the runtime (which is similar to C++ version for
+several events)
+
+How to run the KT jet using Java:
 
 # compile
 javac *.java

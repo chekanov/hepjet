@@ -1,6 +1,10 @@
-# This example run SCjet C++ algorithm using an input data
-# S.Chekanov (ANL) 
+This is an implementation of SCjet jet algorithm in C++. 
+The code supports kT, anti-kT and C/A jet clustering algorithms.
+Author:  S.Chekanov (ANL)  
+License: GNU public license
 
+
+# How to run:
 make
 make run # runs using ../data/single-event.dat
 
