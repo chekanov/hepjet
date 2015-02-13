@@ -32,7 +32,7 @@ int main(){
 
   // build anti- jets with R=0.6
   KT* jet= new KT(0.6, 1, -1, 5.0);
-  jet->setDebug(true);
+  jet->setDebug(false);
   jet->buildJets(input_particles);
   vector<ParticleD*> cjets=jet->getJetsSorted();
   tm.stop();
