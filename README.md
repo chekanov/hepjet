@@ -12,6 +12,9 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <b>scjet_exi_cpp</b> - shows how to make how ambiguity in the  definition create jets exiting too early <br> 
 <b>benchmark</b>    -  compare FastJet and SCJet implementations using the same input.<br>
 <p>
+All algorithms run the anti-kT jet algorithm. One can also run the standard kT and Cambridge/Aachen jet algorithms. 
+
+<p>
 
 FastJet and KtJet C++ codes used by this library are taken  from the orinal <a href="http://fastjet.fr/">FastJet</a> and <a href="https://ktjet.hepforge.org/">KtJet</a> web pages. 
 SCjet is a light-weight implementation of the kT/anti-kT algorithms for jet validation used by the 
