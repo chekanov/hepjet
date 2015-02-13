@@ -23,7 +23,6 @@ bool comp(ParticleD* rhs1, ParticleD* rhs2) {
 };
 
 
-
 /** @brief Initialize calculations of the KT-type of jets
     @param R distance parameter
     @param recom recombination mode. Only recom=1 is supported (E-scheme, p=p1+p2) 
@@ -153,30 +152,24 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 			}
 		} // end of min finding
 
-		/*
-		if (Nstep>2) {
-		  cout << "working on the last unmerged particle " << endl;
-		  cout << "current pair=" << j1 << " " << j2 << endl;
-	}
-		*/
 
 		if (merged==false && Nstep==1) break;
 
 
 		// find min distance to the beam
 		double min1 = ktdistance1[j1];
-	if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
+	        if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
 
 
 		// make the decision about this particle
 		merged=false;
 		if (min12<min1) merged=true;
 
-		if (merged) {   // merge particles
+		if (merged && j1 != j2) {   // merge particles
 			//if (Nstep==1) cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
 			ParticleD *p1 = list[j1];
 			ParticleD *p2 = list[j2];
-			if (j1 != j2)  p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2
+			p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2
 			Nstep--;
 			list[j1] = p1; // replace with p1=p1+p2
 			is_consider[j2]=0; // p2, but keep in the list
@@ -205,18 +198,17 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 		}
 
 
-
-                if (m_debug) {
-                        cout << "## Iteration:" << iter++ << endl;
-                        for (int i = 0; i < size; i++) {
-                                ParticleD *p1 = list[i];
-                                std::string mess="original";
-                                if (is_consider[i]==-1) mess="!final-jet!";
-                                if (is_consider[i]>1) mess="(proto-jet)";
+		if (m_debug) {
+			cout << "## Iteration:" << iter++ << endl;
+			for (int i = 0; i < size; i++) {
+				ParticleD *p1 = list[i];
+				std::string mess="original";
+				if (is_consider[i]==-1) mess="!final-jet!";
+				if (is_consider[i]>1) mess="(proto-jet)";
                                 if (is_consider[i]==0) mess="(removed)";
-                                cout << i << "  E=" << p1->e() << " " << mess << endl;
-                        }
-                }
+				cout << i << "  E=" << p1->e() << " " << mess << endl;
+			}
+		}
 
 
 
@@ -395,7 +387,6 @@ double KT::getKtDistance1(ParticleD *a)
 void KT::setDebug(bool debug)
 {
 
-        if (debug) cout << "Debugging mode is ON" << endl;
 	m_debug = debug;
 }
 
