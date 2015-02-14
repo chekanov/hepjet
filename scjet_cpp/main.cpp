@@ -25,8 +25,7 @@ int main(){
       input_particles.push_back(pp);
   }
 
-   cout << "Reading " << input_particles.size() << " particles" << endl; 
-
+  cout << "Reading " << input_particles.size() << " particles" << endl; 
   Timer tm;
   tm.start();
 

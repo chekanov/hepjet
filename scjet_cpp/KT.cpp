@@ -40,7 +40,7 @@ KT::KT(double R, int recom, int mode, double minpt)
 	m_mode = mode;
 	if (mode == 1)
 	{
-		std::cout << "Longitudinally invariant kt algorithm" << std::endl;
+		std::cout << "Longitudinally invariant kT algorithm" << std::endl;
 	}
 	else if (mode == 0)
 	{
@@ -48,13 +48,17 @@ KT::KT(double R, int recom, int mode, double minpt)
 	}
 	else if (mode == -1)
 	{
-		std::cout << "Longitudinally invariant anti-kt algorithm" << std::endl;
+		std::cout << "Longitudinally invariant anti-kT algorithm" << std::endl;
 	}
 	else
 	{
 		std::cout << "Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R=" << R << std::endl;
 	}
 
+        if (m_recom !=1) {
+           std::cout << "Error. Currently only the E-mode is supported (p1+p2)" <<  std::endl;
+           exit(0);
+        }
 
 
 }
@@ -76,9 +80,8 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 	if (m_debug)
 		tm.start();
 
-	int j1 = -1;
-	int j2 = -1;
-	double min12 = std::numeric_limits<double>::max();
+        double min12 = std::numeric_limits<double>::max(); // distance in a pair d_{12} 
+        double min1  = std::numeric_limits<double>::max(); // distance to the beam d_{iB}  
 
 	// *****************************************
 	// build a  cache and find first closest pair
@@ -110,26 +113,31 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
 
 	int Nstep = size;
-
-
 	//  cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
-
 	bool merged=false;
-	int  iter=0;
+        int j1 = -1;
+        int j2 = -1;
+        int km=-1;
+        int iter=0;
+        int i,j;
 
 	// start loop over all objects
 	while (Nstep > 0) {
 
-		min12 = std::numeric_limits<double>::max();
+		min12 = std::numeric_limits<double>::max(); // distance in a pair d_{12} 
+                min1 =  std::numeric_limits<double>::max(); // distance to the beam d_{iB}  
 
+                // this is fast antiKT jet algorithm
+                // build pseudo-jet aroung particles with large pT
+                if (m_mode <0) {   
 
 		// find smallest d12.
 		// this is after reseting to a new jet
 		if (!merged) {
 
-			for (int i = 0; i < size-1; i++) {
+			for (i=0; i < size-1; i++) {
 				if (is_consider[i]<=0) continue;
-				for (int j = i + 1; j < size; j++) {
+				for (j=i+1; j < size; j++) {
 					if (is_consider[j]<=0) continue;
 					if (ktdistance12[i][j] < min12) {
 						min12 = ktdistance12[i][j];
@@ -138,11 +146,9 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 					}
 				}
 			}
-
-
 		} else {
 			// find another minimum around this jet  when j1>0
-			for (int j = 0; j < size; j++) {
+			for (j=0; j < size; j++) {
 				if (is_consider[j]<=0 || j==j1) continue;
 				if (ktdistance12[j1][j] < min12) {
 					min12 = ktdistance12[j1][j];
@@ -153,25 +159,61 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 		} // end of min finding
 
 
-		if (merged==false && Nstep==1) break;
+                // find min distance to the beam
+                min1 = ktdistance1[j1];
+                if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
 
+                // protect against -1
+                if (merged==false && Nstep==1) break;
 
-		// find min distance to the beam
-		double min1 = ktdistance1[j1];
-	        if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
+                } else  {  // end fast antiKT
+                // start the usual kT algorithm..
+                // -----------------------------//
+
+                j1=0;
+                j2=0;
+                km=0;
+                // find smallest distances
+                for (i=0; i < size-1; i++) {
+                        if (is_consider[i]<=0) continue;
+                        for (j=i+1; j < size; j++) {
+                                if (is_consider[j]<=0) continue;
+                                if (ktdistance12[i][j] < min12) {
+                                        min12 = ktdistance12[i][j];
+                                        j1 = i;
+                                        j2 = j;
+                                }
+                        }
+                }
+
+                // find min distance to the beam
+                for (j = 0; j < size; j++) {
+                        if (is_consider[j]<=0) continue;
+                        if (ktdistance1[j] < min1) {
+                                min1 = ktdistance1[j];
+                                km = j;
+                        }
+                }
+ 
+                } // end kT and CA 
+
 
 
 		// make the decision about this particle
 		merged=false;
 		if (min12<min1) merged=true;
 
-		if (merged && j1 != j2) {   // merge particles
+
+
+                // merging ..
+		if (merged && j1 != j2) { 
 			//if (Nstep==1) cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
 			ParticleD *p1 = list[j1];
 			ParticleD *p2 = list[j2];
 			p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2
 			Nstep--;
-			list[j1] = p1; // replace with p1=p1+p2
+			list[j1] = p1;   // replaced with p1=p1+p2
+                        //list[j2] = NULL; // 
 			is_consider[j2]=0; // p2, but keep in the list
 			is_consider[j1]=is_consider[j1]+1;
 			// recalculate distance for this particle
@@ -185,8 +227,9 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 		}
 
 
-
+                // create a jet
 		if (!merged) {   // add this to the jet
+                        if (m_mode>=0) j1=km; // thsi is for KT and CA/A
 			is_consider[j1] = -1;
 			ParticleD *pj = list[j1];
 			Nstep--;
@@ -194,7 +237,6 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 			{
 				jets.push_back(pj); // fill jets
 			}
-
 		}
 
 
@@ -317,11 +359,10 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	deltaEta = b->getRapidity() - a->getRapidity();
 	double phi1 = a->getPhi();
 	double phi2 = b->getPhi();
-	//deltaPhi = phiAngle(phi2 - phi1);
+	// deltaPhi = phiAngle(phi2 - phi1);
 	deltaPhi = phi2 - phi1;
 	if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
 	if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
-
 	//deltaPhi = phi2 - phi1;
 	//if(deltaPhi >= PI) deltaPhi = std::fmod(PI+deltaPhi, PI2) - PI;
 	//else if(deltaPhi < -PI) deltaPhi = -std::fmod(PI-deltaPhi, PI2) + PI;

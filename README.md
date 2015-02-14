@@ -9,7 +9,6 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <b>nlojet</b>        - implementation of kT-jets from NLOjet++ <br>
 <b>scjet_cpp</b>     - SCJet. An alternative implementation of kT-jet / anti-kT clustering in C++<br>
 <b>scjet_java</b>    - implementation of the SCJet jet algorithm in Java. <br>
-<b>scjet_exi_cpp</b> - illustrates an ambiguity when proto-jet exit too early. <br> 
 <b>benchmark</b>    -  compare FastJet and SCJet implementations using the same input.<br>
 <p>
 All algorithms run the anti-kT jet algorithm. One can also run the standard kT and Cambridge/Aachen jet algorithms. 
@@ -17,7 +16,7 @@ All algorithms run the anti-kT jet algorithm. One can also run the standard kT a
 <p>
 
 FastJet and KtJet C++ codes used by this library are taken  from the orinal <a href="http://fastjet.fr/">FastJet</a> and <a href="https://ktjet.hepforge.org/">KtJet</a> web pages. 
-SCjet is a light-weight implementation of the kT/anti-kT algorithms for jet validation used by the 
+SCjet is a light-weight implementation of the anti-kT algorithms for jet validation used by the 
 <a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
 More details can be found in <a href="https://github.com/chekanov/hephysics">HePhysics package</a>. 
 The Java implementation of SCJet is available from the <a href="http://jwork.org/scavis/">SCaVis data-analysis</a> program. 
@@ -38,7 +37,7 @@ using the default input file (make run). the processing time:
 In summary: <b>fastjet</b> is  about a factor 10 faster than <b>scjet_cpp</b>.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than for the C++ version due to JIT compilation).
-Other similar algorithms are slower.
+Other similar algorithms are slower. When using the kT mode, scjet_cpp is as slow as other algorithms. 
 <p>
 </p>
 
