@@ -414,7 +414,7 @@ public class KT {
 		if (mode == 1)
 			esq = Math.min(a.getPt2(), b.getPt2()); // kT
 		else if (mode == 0)
-			esq = Math.min(a.getPt(), b.getPt()); // C-A
+			esq = 1.0;  // C-A
 		else if (mode == -1)
 			esq = Math.min(1.0 / a.getPt2(), 1.0 / b.getPt2()); // antiKT
 		else
@@ -459,7 +459,7 @@ public class KT {
 		if (mode == 1)
 			return a.getPt2();
 		else if (mode == 0)
-			return a.getPt();
+			return 1.0;
 		else if (mode == -1)
 			return (1.0 / a.getPt2());
 		return a.getPt2();

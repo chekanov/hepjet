@@ -229,7 +229,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
                 // create a jet
 		if (!merged) {   // add this to the jet
-                        if (m_mode>=0) j1=km; // thsi is for KT and CA/A
+                        if (m_mode>=0) j1=km; // thsi is for KT and C/A
 			is_consider[j1] = -1;
 			ParticleD *pj = list[j1];
 			Nstep--;
@@ -376,7 +376,7 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 	}
 	else if (m_mode == 0)
 	{
-		esq = std::min(a->getPt(), b->getPt()); // C-A
+		esq = 1.0 ;  // C-A
 	}
 	else if (m_mode == -1)
 	{
@@ -414,7 +414,7 @@ double KT::getKtDistance1(ParticleD *a)
 	}
 	else if (m_mode == 0)
 	{
-		return a->getPt();
+		return 1.0;
 	}
 	else if (m_mode == -1)
 	{
