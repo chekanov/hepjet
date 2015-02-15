@@ -89,6 +89,12 @@ public class KT {
 			System.out
 					.println("Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R="
 							+ rs);
+
+               if (recom != 1) {
+                     System.out.println("Only E-E-scheme recombination supported! Exit.");
+                     System.exit(0);
+                }
+
 	}
 
 	/**
@@ -140,9 +146,7 @@ public class KT {
 		if (debug)
 			startTime = System.currentTimeMillis();
 
-		int j1 = -1;
-		int j2 = -1;
-		double min12 = Double.MAX_VALUE;
+                int i,j;
 
 		ktdistance1 = new double[size];
 		is_consider = new int[size];
@@ -153,9 +157,9 @@ public class KT {
 		}
 
 		ktdistance12 = new double[size][size];
-		for (int i = 0; i < size - 1; i++) {
+		for (i=0; i<size - 1; i++) {
 			ParticleD p1 = (ParticleD) list.get(i);
-			for (int j = i + 1; j < size; j++) {
+			for (j=i+1; j < size; j++) {
 				ParticleD p2 = (ParticleD) list.get(j);
 				ktdistance12[i][j] = getKtDistance12(p1, p2);
 
@@ -173,16 +177,26 @@ public class KT {
 		int Nstep = size;
 		int iter=0;
                 boolean merged=false;
+                int km = -1;
+                int j1 = -1;
+                int j2 = -1;
+                double min12 = Double.MAX_VALUE;
+                double min1 = Double.MAX_VALUE;
 
 		while (Nstep > 0) {
 
 			min12 = Double.MAX_VALUE;
+                        min1 = Double.MAX_VALUE;
+
+                        // this is fast antiKT jet algorithm
+                        // build pseudo-jet aroung particles with large pT
+                        if (mode <0) { 
 			// this is after reseting to a new jet
-			if (!merged) {
-				for (int i = 0; i < size - 1; i++) {
+			  if (!merged) {
+				for (i=0; i < size - 1; i++) {
 					if (is_consider[i] <= 0)
 						continue;
-					for (int j = i + 1; j < size; j++) {
+					for (j=i + 1; j < size; j++) {
 						if (is_consider[j] <= 0)
 							continue;
 						if (ktdistance12[i][j] < min12) {
@@ -192,9 +206,9 @@ public class KT {
 						}
 					}
 				}
-			} else {
+			  } else {
 				// find another minimum around this jet when j1>0
-				for (int j = 0; j < size; j++) {
+				for (j=0; j < size; j++) {
 					if (is_consider[j] <= 0 || j == j1)
 						continue;
 					if (ktdistance12[j1][j] < min12) {
@@ -206,19 +220,51 @@ public class KT {
 
 			} // end of min finding
 
-                         if (merged==false && Nstep==1) break;
-                        // System.out.println(Nstep+" "+j1);
-
 			// find min distance to the beam
-			double min1 = ktdistance1[j1];
-			if (ktdistance1[j2] < min1) {
-				min1 = ktdistance1[j2];
-			}
+			min1 = ktdistance1[j1];
+			if (ktdistance1[j2] < min1) min1 = ktdistance1[j2]; 
+
+
+                        if (merged==false && Nstep==1) break;
+
+                        }  else { 
+
+                           // end fast antiKT
+                           // start the usual kT algorithm..
+                           // -----------------------------//
+
+                     j1=0;
+                     j2=0;
+	             km=0;
+                    // find smallest distances
+                      for (i=0; i < size-1; i++) {
+                        if (is_consider[i]<=0) continue;
+                        for (j=i+1; j < size; j++) {
+                                if (is_consider[j]<=0) continue;
+                                if (ktdistance12[i][j] < min12) {
+                                        min12 = ktdistance12[i][j];
+                                        j1 = i;
+                                        j2 = j;
+                                }
+                            }
+                         }
+
+                // find min distance to the beam
+                     for (j = 0; j < size; j++) {
+                        if (is_consider[j]<=0) continue;
+                        if (ktdistance1[j] < min1) {
+                                min1 = ktdistance1[j];
+                                km = j;
+                        }
+                }
+
+
+               } // end kT and CA 
+
 
 			// make the decision about this particle
 			merged = false;
-			if (min12 < min1)
-				merged = true;
+			if (min12 < min1)  merged = true; 
 
 			if (merged) {
 				ParticleD p1 = (ParticleD) list.get(j1);
@@ -231,7 +277,7 @@ public class KT {
 				is_consider[j1] = is_consider[j1] + 1; 
 				// recalculate distance for this particle
 				ktdistance1[j1] = getKtDistance1(p1);
-				for (int i = 0; i < size; i++) {
+				for (i = 0; i < size; i++) {
 					if (is_consider[i] <= 0 || i == j1)
 						continue;
 					ParticleD pp1 = (ParticleD) list.get(i);
@@ -241,6 +287,7 @@ public class KT {
 			}
 
 			if (!merged) { // add this to the jet
+                                if (mode>=0) j1=km; // thsi is for KT and C/A
 				is_consider[j1] = -1;
 				ParticleD pj = (ParticleD) list.get(j1);
 				Nstep--;
@@ -251,9 +298,9 @@ public class KT {
 
 			
 			 if (debug) {
-				 iter++;
+			 iter++;
                          System.out.println("## Iteration:"+Integer.toString(iter));
-                         for (int i = 0; i < size; i++) {
+                         for (i=0; i< size; i++) {
                          ParticleD p1 = (ParticleD) list.get(i);
                          String mess="original";
                          if (is_consider[i]==-1) mess="!final-jet!";
@@ -275,14 +322,14 @@ public class KT {
 		
         // attempt to deal with unmeargable particle
         int ins=-1;
-        for (int i = 0; i < size; i++)
+        for (i=0; i < size; i++)
         if (is_consider[i]==1) {ins=i;};
 
         if (ins>-1) {
                 ParticleD p2 = list.get(ins);
                 if (debug) System.out.println("Unmerged particle id="+Integer.toString(ins));
                 min12 = Double.MAX_VALUE;
-                for (int j = 0; j < jets.size(); j++) {
+                for (j=0; j < jets.size(); j++) {
                         ParticleD lp = jets.get(j);
                         double d=getDistance(p2, lp);
                         if (d<min12) { j1=j; min12 =d; };
@@ -298,7 +345,7 @@ public class KT {
 
                 // sanity test. All particles were merged?
                 int nn=0; ins=-1;
-                for (int i = 0; i < size; i++)
+                for (i=0; i<size; i++)
                 if (is_consider[i]==1) {nn++; ins=i;};
                 if (nn != 0)   System.out.println( "--> WARNING: particle with ID="+ Integer.toString(ins)+" unmerged");
 
