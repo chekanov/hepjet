@@ -24,17 +24,19 @@ The Java implementation of SCJet is available from the <a href="http://jwork.org
 <h2>Benchmark results</h2>
 
 The benchmarks have been done on Xeon(R) CPU E5520 @ 2.27GHz
-using the default input file (make run). the processing time:
+using the input file with 1000 particles (data/single-event.dat) for a 100 pp collision event
+(ttbar, pT>8 TeV). The processing time:
 
  <ul>
-  <li>fastjet    - 1 msec</li>
-  <li>scjet_cpp -  8 msec (fast mode) or 15 msec (the standard mode) </li>   
-  <li>scjet_java - 8 msec (after multiple runs, fast mode) </li>
-  <li>nlojet    - 28 msec</li>
-  <li>ktjet     - 32 msec</li>
+  <li>fastjet    - ? msec (failed) </li>
+  <li>scjet_cpp -  105 msec (fast mode) or 990 msec (the standard mode) </li>   
+  <li>scjet_java - 103 msec (after multiple runs, fast mode) </li>
+  <li>nlojet    - ? (failed)</li>
+  <li>ktjet     - 370 msec</li>
+  <li>pgjet_cpp - 4756 ms msec (no cache, using set)</li>
 </ul> 
 
-In summary: <b>fastjet</b> is  about a factor 8 faster than <b>scjet_cpp</b>.
+In summary: <b>fastjet</b> is  about a factor 8 faster than <b>scjet_cpp</b> when using about 350 input particles.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than for the C++ version due to JIT compilation).
 Other similar algorithms are slower. When using the kT mode, scjet_cpp is as slow as other algorithms. 
