@@ -29,25 +29,27 @@ using the input file with 1000 particles (data/single-event.dat) for a 100 pp co
 
  <ul>
   <li>fastjet    - ? msec (failed) </li>
-  <li>scjet_cpp -  105 msec (fast mode) or 990 msec (the standard mode) </li>   
+  <li>scjet_cpp -  105 msec (fast N^2 mode) or 990 msec (the standard N^3 mode) </li>   
   <li>scjet_java - 103 msec (after multiple runs, fast mode) </li>
-  <li>nlojet    - ? (failed)</li>
+  <li>nlojet    - ? (failed). Used by NLOjet++</li>
   <li>ktjet     - 370 msec</li>
-  <li>pgjet_cpp - 4756 ms msec (no cache, using set)</li>
+  <li>pgjet_cpp - 4756 ms msec (no cache, using std::set)</li>
 </ul> 
 
-In summary: <b>fastjet</b> is  about a factor 8 faster than <b>scjet_cpp</b> when using about 350 input particles.
+In summary: <b>fastjet</b> is  about a factor 8 faster than <b>scjet_cpp</b> when using about 350 input particles,
+but failed for more than 1000 particles.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
-over events (first run is a factor 4 slower than for the C++ version due to JIT compilation).
-Other similar algorithms are slower. When using the kT mode, scjet_cpp is as slow as other algorithms. 
+over events (first run is a factor 4 slower than for the C++ version due to the JIT compilation).
+Other similar algorithms are slower. When using the kT mode, <b>scjet_java</b> is as slow as  <b>ktjet</b>. 
 
 <p>
 </p>
 
 There are some differences in the output jets between different implementations. 
 The difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations 
-can be at the level of 2% for transverse momentum of sub-leading jets (n(jets)>4) due to an ambiguity
-of merging some low-pT particles. For the standard mode, <b>scjet_cpp</b> and <b>fastjet</b> are identical. 
+can be at the level of 2% for transverse momentum of very soft jets due to an ambiguity
+of merging some low-pT particles when using N^2 algorithm ("fast mode").
+For the standard N^3 mode, <b>scjet_cpp</b> and <b>fastjet</b> have identical outputs. 
 The difference between <b>nlojet</b> and  <b>fastjet</b> is also at the level of a few percents. 
 No difference is found between <b>fastjet</b> and  <b>ktjet</b> implementations. 
 
