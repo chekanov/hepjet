@@ -7,7 +7,7 @@
 #include <iostream> 
 #include <cstdio>   
 #include "ParticleD.h"  
-#include "KT.h"   
+#include "SCJet.h"   
 #include "Timer.h"
 
 const double PI2 = 6.28318530716;
@@ -30,13 +30,13 @@ int main(){
   tm.start();
 
   // build anti-KT jets (p=-1) with R=0.6
-  KT* jet= new KT(0.6, 1, -1, 5.0,true);
+  SCJet* jet= new SCJet(0.6, 1, -1, 5.0,true);
   jet->setDebug(false);
   jet->buildJets(input_particles);
   vector<ParticleD*> cjets=jet->getJetsSorted();
   tm.stop();
 
-  cout << "Final output:" << endl;
+  cout << "SCJet output:" << endl;
   printf("%5s %15s %15s %15s %8s\n","jet #", "rapidity", "phi", "pt", " const");
   for (unsigned int i = 0; i < cjets.size(); i++) {
     ParticleD *lp = cjets[i];

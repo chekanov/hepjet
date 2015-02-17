@@ -3,7 +3,7 @@ all:
 	javac *.java 
 
 run:
-	java KT ../data/single-event.dat
+	java SCJet ../data/single-event.dat
 	
 clean: 
 	rm -f *.class;

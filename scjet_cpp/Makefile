@@ -6,8 +6,8 @@ LDFLAGS=-g
 
 all: main
 
-main: main.o KT.o ParticleD.o
-	$(CXX) $(LDFLAGS) -o $@ $@.o KT.o ParticleD.o
+main: main.o SCJet.o ParticleD.o
+	$(CXX) $(LDFLAGS) -o $@ $@.o SCJet.o ParticleD.o
 
 clean:
 	rm -vf main *.o *~ 
