@@ -27,68 +27,42 @@ private:
 	bool m_debug;
 	double m_minpt;
 	int m_mode;
+        bool m_fast;
 
 
-	/// <summary>
-	/// Initialize calculations of the longitudinally invariant kT algorithm in inclusive mode. 
-	/// Jet can be clustered using Cambridge/Aachen or anti-kT approaches, depending on the "mode" parameter. 
-	/// The distance parameters are rapidity and phi. 
-	/// </summary>
-	/// <param name="R">
-	///            distance measure </param>
-	/// <param name="recom">
-	///            recombination scheme.<br>
-	///            1: The E-scheme Simple 4-vector addition. <br>
-	///            2: The pT-scheme. <br>
-	///            3: The pT^2 scheme. <br>
-	///            Currently only E-scheme is implemented. </param>
-	/// <param name="mode"> 
-	///          clustering mode dij=min(kT_i^{2* mode},kT_j^{2* mode})). <br>
-	///          mode=1 means inclusive KT jet algorithm <br> 
-	///          mode=0 means Cambridge/Aachen jet algorithm <br> 
-	///          mode=-1 means anti-KT jet algorithm <br> </param>
-	/// <param name="minpt">
-	///            min pT for final jets. </param>
-public:
-	KT(double R, int recom, int mode, double minpt);
-
-
-	/// <summary>
-	/// Initialize calculations of the KT algorithm. Meaningful values are R=0.2- 1.
-	/// Jets are clustered in rapidity and phi space. 
-	/// </summary>
-	/// <param name="R">
-	///            distance measure </param>
-	/// <param name="recom">
-	///            recombination scheme.<br>
-	///            1: The E-scheme Simple 4-vector addition. <br>
-	///            2: The pT-scheme. <br>
-	///            3: The pT^2 scheme. <br>
-	///            Currently only E-scheme is implemented. </param>
-	/// <param name="minpt">
-	///            min pT for final jets. </param>
-	KT(double R, int recom, double minpt);
-
-
-	/// <summary>
-	/// Initialize calculations of the KT algorithm. Meaningful values are R=0.2- 1.
-	/// Jets are clustered in rapidity and phi space. The The E-scheme with 4-vector addition is used. 
-	/// </summary>
-	/// <param name="R">
-	///            distance measure </param>
-	/// <param name="minpt">
-	///            min pT for final jets. </param>
-	KT(double R, double minpt);
+        /**
+	* Initialize calculations of the longitudinally invariant kT algorithm in inclusive mode. 
+	* Jet can be clustered using Cambridge/Aachen or anti-kT approaches, depending on the "mode" parameter. 
+	* The distance parameters are rapidity and phi. 
+	* @param R
+	*          distance measure defined in rapidity-phi. 
+	* @param recom
+	*            recombination scheme.
+	*            1: The E-scheme Simple 4-vector addition.
+	*            2: The pT-scheme. 
+	*            3: The pT^2 scheme.
+	*            Currently only E-scheme is implemented. </param>
+	* @param mode 
+	*          clustering mode dij=min(kT_i^{2* mode},kT_j^{2* mode})).
+	*          mode=1 means inclusive KT jet algorithm  
+	*          mode=0 means Cambridge/Aachen jet algorithm 
+	*          mode=-1 means anti-KT jet algorithm 
+	* @param minpt
+	*            min pT for final jets.
+        *
+        * @param isfast
+        *           when true, enable fast calculations for anti-kT jets. They scale as N^2, unlike the traditional anti-kT N^3.
+        *           Some small difference for very soft jets may exist compared to the traditonal anti-kT. 
+        **/
+	public: KT(double R=0.6, int recom=1, int mode=-1, double minpt=5.0, bool isfast=true);
 
 
 
-
-	/// <summary>
-	/// Run the jet algorithm using the list of particles. 
-	/// </summary>
-	/// <param name="list">
-	///            list with particles </param>
-	/// <returns> final jets without sorting. </returns>
+	/** Run the jet algorithm using the list of particles. 
+	* @param list
+	*            list with particles
+	* @returns final jets without sorting.
+        **/ 
 	virtual std::vector<ParticleD*> buildJets(std::vector<ParticleD*> &list);
 
 
@@ -130,6 +104,10 @@ public:
 	/// <returns> kT distance </returns>
 	virtual double getKtDistance1(ParticleD *a);
 
+
+        /// <summary>
+        /// This is the distance in Rapidity-Phi. 
+        virtual double getDistance(ParticleD *a, ParticleD *b);
 
 
 	/// <summary>

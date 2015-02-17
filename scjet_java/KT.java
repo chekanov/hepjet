@@ -42,7 +42,7 @@ public class KT {
 	private double minpt = 0;
 	private int mode = 1;
 	private DecimalFormat formatter = new DecimalFormat("%.12f");
-
+        boolean m_fast;
 	/**
 	 * Initialize calculations of the longitudinally invariant kT algorithm in
 	 * inclusive mode. Jet can be clustered using Cambridge/Aachen or anti-kT
@@ -64,57 +64,83 @@ public class KT {
 	 *            mode=-1 means anti-KT jet algorithm <br>
 	 * @param minpt
 	 *            min pT for final jets.
+         * @param isfast
+         *           if true, use a faster algorithm for anti-kT that scales similar to N*N. If false, use the traditional that scales as N^3.
 	 */
-	public KT(double R, int recom, int mode, double minpt) {
+	public KT(double R, int recom, int mode, double minpt, boolean isfast) {
 		this.R = R;
 		this.R2 = (R * R);
 		this.recom = recom;
 		this.debug = false;
 		this.minpt = minpt;
 		this.mode = mode;
+                this.m_fast=isfast;
+
 		DecimalFormat formatter1 = new DecimalFormat("#0.00");
 		String rs = formatter1.format(this.R);
 		System.out
-				.println("Initialization of Java jet algorithm. S.Chekanov (ANL)");
+				.println("SCjet: Initialization of Java jet algorithm. S.Chekanov (ANL)");
 		System.out
-				.println("Inclusive mode using the E-scheme recombination and R="
+				.println("SCjet: Inclusive mode using the E-scheme recombination and R="
 						+ rs);
 		if (mode == 1)
-			System.out.println("Longitudinally invariant kt algorithm");
+			System.out.println("SCjet: Longitudinally invariant kt algorithm");
 		else if (mode == 0)
-			System.out.println("Cambridge/Aachen algorithm");
+			System.out.println("SCjet: Cambridge/Aachen algorithm");
 		else if (mode == -1)
-			System.out.println("Longitudinally invariant anti-kt algorithm");
+			System.out.println("SCjet: Longitudinally invariant anti-kt algorithm");
 		else
 			System.out
-					.println("Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R="
+					.println("SCjet: Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R="
 							+ rs);
 
                if (recom != 1) {
-                     System.out.println("Only E-E-scheme recombination supported! Exit.");
+                     System.out.println("SCjet: Only E-E-scheme recombination supported! Exit.");
                      System.exit(0);
                 }
 
+
+          if (m_fast ==true && mode==-1){
+             System.out.println("SCjet: Fast mode for anti-kT is enabled.");
+        }
+
+          if (m_fast ==false && mode==-1){
+             System.out.println("SCjet: Fast mode for anti-kT is disabled.");
+        }
+
+        if (m_fast ==true && mode>=0) {
+           System.out.println("SCjet: Currently, the fast mode is enabled for anti-KT jets. Exit."); 
+           System.exit(0);
+        }
+
+              
 	}
 
-	/**
-	 * Initialize calculations of the KT algorithm. Meaningful values are R=0.2-
-	 * 1. Jets are clustered in rapidity and phi space.
-	 * 
-	 * @param R
-	 *            distance measure
-	 * @param recom
-	 *            recombination scheme.<br>
-	 *            1: The E-scheme Simple 4-vector addition. <br>
-	 *            2: The pT-scheme. <br>
-	 *            3: The pT^2 scheme. <br>
-	 *            Currently only E-scheme is implemented.
-	 * @param minpt
-	 *            min pT for final jets.
-	 */
-	public KT(double R, int recom, double minpt) {
-		this(R, recom, 1, minpt);
-	}
+         /**
+         * Initialize calculations of the longitudinally invariant kT algorithm in
+         * inclusive mode. Jet can be clustered using Cambridge/Aachen or anti-kT
+         * approaches, depending on the "mode" parameter. The distance parameters
+         * are rapidity and phi. Fast mode is disabled. 
+         * 
+         * @param R
+         *            distance measure
+         * @param recom
+         *            recombination scheme.<br>
+         *            1: The E-scheme Simple 4-vector addition. <br>
+         *            2: The pT-scheme. <br>
+         *            3: The pT^2 scheme. <br>
+         *            Currently only E-scheme is implemented.
+         * @param mode
+         *            clustering mode dij=min(kT_i^{2* mode},kT_j^{2* mode})). <br>
+         *            mode=1 means inclusive KT jet algorithm <br>
+         *            mode=0 means Cambridge/Aachen jet algorithm <br>
+         *            mode=-1 means anti-KT jet algorithm <br>
+         * @param minpt
+         *            min pT for final jets.
+         */
+        public KT(double R, int recom, int mode, double minpt) {
+                       this(R, recom, mode, minpt, false);
+        }
 
 	/**
 	 * Initialize calculations of the KT algorithm. Meaningful values are R=0.2-
@@ -127,7 +153,7 @@ public class KT {
 	 *            min pT for final jets.
 	 */
 	public KT(double R, double minpt) {
-		this(R, 1, 1, minpt);
+		this(R, 1, 1, minpt,false);
 	}
 
 	/**
@@ -180,97 +206,102 @@ public class KT {
                 int km = -1;
                 int j1 = -1;
                 int j2 = -1;
-                double min12 = Double.MAX_VALUE;
-                double min1 = Double.MAX_VALUE;
+                double min12;
+                double min1;
 
 		while (Nstep > 0) {
 
 			min12 = Double.MAX_VALUE;
                         min1 = Double.MAX_VALUE;
 
-                        // this is fast antiKT jet algorithm
-                        // build pseudo-jet aroung particles with large pT
-                        if (mode <0) { 
-			// this is after reseting to a new jet
-			  if (!merged) {
-				for (i=0; i < size - 1; i++) {
-					if (is_consider[i] <= 0)
-						continue;
-					for (j=i + 1; j < size; j++) {
-						if (is_consider[j] <= 0)
-							continue;
-						if (ktdistance12[i][j] < min12) {
-							min12 = ktdistance12[i][j];
-							j1 = i;
-							j2 = j;
-						}
-					}
-				}
-			  } else {
-				// find another minimum around this jet when j1>0
-				for (j=0; j < size; j++) {
-					if (is_consider[j] <= 0 || j == j1)
-						continue;
-					if (ktdistance12[j1][j] < min12) {
-						min12 = ktdistance12[j1][j];
-						j1 = j1;
-						j2 = j;
-					}
-				}
+                // this is fast antiKT jet algorithm
+                // build pseudo-jet aroung particles with large pT
+                if (m_fast ==true) {
 
-			} // end of min finding
+                // find smallest d12.
+                // this is after reseting to a new jet
+                if (!merged) {
 
-			// find min distance to the beam
-			min1 = ktdistance1[j1];
-			if (ktdistance1[j2] < min1) min1 = ktdistance1[j2]; 
-
-
-                        if (merged==false && Nstep==1) break;
-
-                        }  else { 
-
-                           // end fast antiKT
-                           // start the usual kT algorithm..
-                           // -----------------------------//
-
-                     j1=0;
-                     j2=0;
-	             km=0;
-                    // find smallest distances
-                      for (i=0; i < size-1; i++) {
-                        if (is_consider[i]<=0) continue;
-                        for (j=i+1; j < size; j++) {
-                                if (is_consider[j]<=0) continue;
-                                if (ktdistance12[i][j] < min12) {
-                                        min12 = ktdistance12[i][j];
-                                        j1 = i;
+                        for (i=0; i < size-1; i++) {
+                                if (is_consider[i]<=0) continue;
+                                for (j=i+1; j < size; j++) {
+                                        if (is_consider[j]<=0) continue;
+                                        if (ktdistance12[i][j] < min12) {
+                                                min12 = ktdistance12[i][j];
+                                                j1 = i;
+                                                j2 = j;
+                                        }
+                                }
+                        }
+                } else {
+                        // find another minimum around this jet  when j1>0
+                        for (j=0; j < size; j++) {
+                                if (is_consider[j]<=0 || j==j1) continue;
+                                if (ktdistance12[j1][j] < min12) {
+                                        min12 = ktdistance12[j1][j];
+                                        j1 = j1;
                                         j2 = j;
                                 }
-                            }
-                         }
+                        }
+                } // end of min finding
+
 
                 // find min distance to the beam
-                     for (j = 0; j < size; j++) {
+                min1 = ktdistance1[j1];
+                if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
+
+                // protect against -1
+                if (merged==false && Nstep==1) break;
+
+                  // make the decision about this particle
+                  merged = false;
+                 if (min12 < min1)  merged = true;
+
+
+
+                } else  {  // end fast antiKT
+                // start the usual kT algorithm..
+                // -----------------------------//
+
+
+                // find min distance to the beam
+                km =-1;
+                for (j = 0; j < size; j++) {
                         if (is_consider[j]<=0) continue;
                         if (ktdistance1[j] < min1) {
                                 min1 = ktdistance1[j];
                                 km = j;
                         }
+                 }
+
+
+                j1=-1;
+                j2=-1;
+                // find smallest dij distances
+                for (i=0; i < size-1; i++) {
+                        if (is_consider[i]<=0) continue;
+                        for (j=i+1; j < size; j++) {
+                                if (is_consider[j]<=0) continue;
+                                if (ktdistance12[i][j]<min1) {
+                                        min1=ktdistance12[i][j];
+                                        j1 = i;
+                                        j2 = j;
+                                }
+                        }
                 }
 
+                // make the decision about this particle
+                merged=false;
+                if (j1>-1 && j2>-1) merged=true;
 
-               } // end kT and CA 
+
+                } // end standard kt 
 
 
-			// make the decision about this particle
-			merged = false;
-			if (min12 < min1)  merged = true; 
-
-			if (merged) {
+			if (merged && j1 != j2) {
 				ParticleD p1 = (ParticleD) list.get(j1);
 				ParticleD p2 = (ParticleD) list.get(j2);
-				if (j1 != j2)
-					p1.add(p2, j2); // also keeps an index
+				p1.add(p2, j2); // also keeps an index
 				Nstep--;
 				list.set(j1, p1); // replace with p1+p2
 				is_consider[j2] = 0;
@@ -282,12 +313,13 @@ public class KT {
 						continue;
 					ParticleD pp1 = (ParticleD) list.get(i);
 					ktdistance12[j1][i] = getKtDistance12(p1, pp1);
+                                        if (mode <0) ktdistance12[i][j1] = getKtDistance12(p1, pp1);
 				}
 
 			}
 
 			if (!merged) { // add this to the jet
-                                if (mode>=0) j1=km; // thsi is for KT and C/A
+                                if (!m_fast) j1=km; // thsi is for KT and C/A
 				is_consider[j1] = -1;
 				ParticleD pj = (ParticleD) list.get(j1);
 				Nstep--;
@@ -542,7 +574,7 @@ public class KT {
 		}
 
 		// for correct benchmark with C++ (after just-in-time compiler)
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 10; i++) {
 
 			List<ParticleD> list = new ArrayList<ParticleD>();
 			try {
@@ -576,7 +608,7 @@ public class KT {
 			System.out.println("Run Nr=" + Integer.toString(i));
 
                         long startTime = System.currentTimeMillis();
-			KT kt = new KT(0.6, 1, -1, 5.0);
+			KT kt = new KT(0.6, 1, -1, 5.0, true);
 			kt.setDebug(false);
 			kt.buildJets(list);
 			kt.printJets();

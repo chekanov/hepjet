@@ -80,8 +80,8 @@ int main(){
    // SCjet implementation
    // build anti-kt jets with R=0.6
    cout << "\nBuilding SCJet for comparison.." << endl; 
-   KT* jet= new KT(R, 1, -1, ptmin);
-   jet->setDebug(true);
+   KT* jet= new KT(R, 1, -1, ptmin,false);
+   jet->setDebug(false);
    jet->buildJets(input_particles2);
    vector<ParticleD*> cjets=jet->getJetsSorted(); 
    printf("%5s %15s %15s %15s\n","jet #", "rapidity", "phi", "pt");

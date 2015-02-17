@@ -27,10 +27,11 @@ bool comp(ParticleD* rhs1, ParticleD* rhs2) {
     @param R distance parameter
     @param recom recombination mode. Only recom=1 is supported (E-scheme, p=p1+p2) 
     @param mode defines the algorithm. 1 means KT, -1 is anti-KT, 0 is Cambridge/Aachen
+    @param isfast. if true, use N*N algorithm for anti-kT. If false, use the traditional that scales as N^3. 
     @author S.Chekanov 
     @version 1.0 02/02/14
 */
-KT::KT(double R, int recom, int mode, double minpt)
+KT::KT(double R, int recom, int mode, double minpt, bool isfast)
 {
 	m_R = R;
 	m_R2 = (R * R);
@@ -38,25 +39,36 @@ KT::KT(double R, int recom, int mode, double minpt)
 	m_debug = false;
 	m_minpt = minpt;
 	m_mode = mode;
+        m_fast=isfast;
+
 	if (mode == 1)
 	{
-		std::cout << "Longitudinally invariant kT algorithm" << std::endl;
+		std::cout << "SCJet: Longitudinally invariant kT algorithm" << std::endl;
 	}
 	else if (mode == 0)
 	{
-		std::cout << "Cambridge/Aachen algorithm" << std::endl;
+		std::cout << "SCjet: Cambridge/Aachen algorithm" << std::endl;
 	}
 	else if (mode == -1)
 	{
-		std::cout << "Longitudinally invariant anti-kT algorithm" << std::endl;
+		std::cout << "SCJet: Longitudinally invariant anti-kT algorithm" << std::endl;
 	}
 	else
 	{
-		std::cout << "Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R=" << R << std::endl;
+		std::cout << "SCjet: Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R=" << R << std::endl;
 	}
 
         if (m_recom !=1) {
-           std::cout << "Error. Currently only the E-mode is supported (p1+p2)" <<  std::endl;
+           std::cout << "SCJet: Error. Currently only the E-mode is supported (p1+p2)" <<  std::endl;
+           exit(0);
+        }
+
+        if (m_fast ==true && m_mode==-1){
+          std::cout <<  "SCjet: Fast mode for anti-kT is enabled." << endl;
+        }
+
+        if (m_fast ==true && m_mode>=0) {
+           std::cout << "SCjet: Currently, the fast mode is enabled for anti-KT jets. Exit." <<  std::endl;
            exit(0);
         }
 
@@ -129,7 +141,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
                 // this is fast antiKT jet algorithm
                 // build pseudo-jet aroung particles with large pT
-                if (m_mode <0) {   
+                if (m_fast ==true) {   
 
 		// find smallest d12.
 		// this is after reseting to a new jet
@@ -166,42 +178,51 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
                 // protect against -1
                 if (merged==false && Nstep==1) break;
 
+                  // make the decision about this particle
+                  merged = false;
+                 if (min12 < min1)  merged = true;
+
+
+
                 } else  {  // end fast antiKT
                 // start the usual kT algorithm..
                 // -----------------------------//
 
-                j1=0;
-                j2=0;
-                km=0;
-                // find smallest distances
-                for (i=0; i < size-1; i++) {
-                        if (is_consider[i]<=0) continue;
-                        for (j=i+1; j < size; j++) {
-                                if (is_consider[j]<=0) continue;
-                                if (ktdistance12[i][j] < min12) {
-                                        min12 = ktdistance12[i][j];
-                                        j1 = i;
-                                        j2 = j;
-                                }
-                        }
-                }
 
                 // find min distance to the beam
+                km =-1;
                 for (j = 0; j < size; j++) {
                         if (is_consider[j]<=0) continue;
                         if (ktdistance1[j] < min1) {
                                 min1 = ktdistance1[j];
                                 km = j;
                         }
+                 }
+
+
+                j1=-1;
+                j2=-1;
+                // find smallest dij distances
+                for (i=0; i < size-1; i++) {
+                        if (is_consider[i]<=0) continue;
+                        for (j=i+1; j < size; j++) {
+                                if (is_consider[j]<=0) continue;
+                                if (ktdistance12[i][j]<min1) {
+                                        min1=ktdistance12[i][j];
+                                        j1 = i;
+                                        j2 = j;
+                                }
+                        }
                 }
+
+
+                // make the decision about this particle
+                merged=false;
+                if (j1>-1 && j2>-1) merged=true;
+
  
-                } // end kT and CA 
+                } // end standard kT
 
-
-
-		// make the decision about this particle
-		merged=false;
-		if (min12<min1) merged=true;
 
 
 
@@ -222,6 +243,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 				if (is_consider[i]<=0) continue;
 				ParticleD *pp1 = list[i];
 				ktdistance12[j1][i] = getKtDistance12(p1, pp1);
+                                if (m_mode <0) ktdistance12[i][j1] = getKtDistance12(p1, pp1);
 			}
 
 		}
@@ -229,7 +251,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
                 // create a jet
 		if (!merged) {   // add this to the jet
-                        if (m_mode>=0) j1=km; // thsi is for KT and C/A
+                        if (!m_fast) j1=km; // this is for KT and C/A
 			is_consider[j1] = -1;
 			ParticleD *pj = list[j1];
 			Nstep--;

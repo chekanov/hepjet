@@ -29,8 +29,8 @@ int main(){
   Timer tm;
   tm.start();
 
-  // build anti- jets with R=0.6
-  KT* jet= new KT(0.6, 1, -1, 5.0);
+  // build anti-KT jets (p=-1) with R=0.6
+  KT* jet= new KT(0.6, 1, -1, 5.0,true);
   jet->setDebug(false);
   jet->buildJets(input_particles);
   vector<ParticleD*> cjets=jet->getJetsSorted();
