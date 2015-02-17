@@ -8,7 +8,7 @@
 #include <iostream> 
 #include <cstdio>   
 #include "ParticleD.h"
-#include "KT.h"
+#include "SCJet.h"
 
 const double PI2 = 6.28318530716;
 
@@ -80,7 +80,7 @@ int main(){
    // SCjet implementation
    // build anti-kt jets with R=0.6
    cout << "\nBuilding SCJet for comparison.." << endl; 
-   KT* jet= new KT(R, 1, -1, ptmin,false);
+   SCJet* jet= new SCJet(R,1,-1,ptmin,false);
    jet->setDebug(false);
    jet->buildJets(input_particles2);
    vector<ParticleD*> cjets=jet->getJetsSorted(); 
@@ -98,12 +98,11 @@ int main(){
   int xmax=inclusive_jets.size();
   if (cjets.size()<xmax) xmax=cjets.size();
 
-  cout << "\nRelative difference between FastJet and CJet (%)" << endl;
+  cout << "\nRelative difference between FastJet and SCJet (%)" << endl;
   for (unsigned int i = 0; i < inclusive_jets.size(); i++) {
 
    double phi = cjets[i]->phi();
    if (phi < 0) phi = PI2 + phi;
-
       double x1=(double)(100*(inclusive_jets[i].rap()-cjets[i]->rapidity())/inclusive_jets[i].rap());
       double x2=(double)(100*(inclusive_jets[i].phi()-phi)/inclusive_jets[i].phi());
       double x3=(double)(100*(inclusive_jets[i].perp()-cjets[i]->perp())/inclusive_jets[i].perp());

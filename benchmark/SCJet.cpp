@@ -7,7 +7,7 @@ S.Chekanov (ANL)
 
 #include <iostream>
 #include <cstdio>
-#include "KT.h"
+#include "SCJet.h"
 #include "Timer.h"
 #include <vector>
 #include <algorithm>
@@ -31,7 +31,7 @@ bool comp(ParticleD* rhs1, ParticleD* rhs2) {
     @author S.Chekanov 
     @version 1.0 02/02/14
 */
-KT::KT(double R, int recom, int mode, double minpt, bool isfast)
+SCJet::SCJet(double R, int recom, int mode, double minpt, bool isfast)
 {
 	m_R = R;
 	m_R2 = (R * R);
@@ -39,7 +39,7 @@ KT::KT(double R, int recom, int mode, double minpt, bool isfast)
 	m_debug = false;
 	m_minpt = minpt;
 	m_mode = mode;
-        m_fast=isfast;
+	m_fast=isfast;
 
 	if (mode == 1)
 	{
@@ -58,19 +58,19 @@ KT::KT(double R, int recom, int mode, double minpt, bool isfast)
 		std::cout << "SCjet: Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R=" << R << std::endl;
 	}
 
-        if (m_recom !=1) {
-           std::cout << "SCJet: Error. Currently only the E-mode is supported (p1+p2)" <<  std::endl;
-           exit(0);
-        }
+	if (m_recom !=1) {
+		std::cout << "SCJet: Error. Currently only the E-mode is supported (p1+p2)" <<  std::endl;
+		exit(0);
+	}
 
-        if (m_fast ==true && m_mode==-1){
-          std::cout <<  "SCjet: Fast mode for anti-kT is enabled." << endl;
-        }
+	if (m_fast ==true && m_mode==-1){
+		std::cout <<  "SCjet: Fast mode for anti-kT is enabled." << endl;
+	}
 
-        if (m_fast ==true && m_mode>=0) {
-           std::cout << "SCjet: Currently, the fast mode is enabled for anti-KT jets. Exit." <<  std::endl;
-           exit(0);
-        }
+	if (m_fast ==true && m_mode>=0) {
+		std::cout << "SCjet: Currently, the fast mode is enabled for anti-KT jets. Exit." <<  std::endl;
+		exit(0);
+	}
 
 
 }
@@ -82,7 +82,7 @@ KT::KT(double R, int recom, int mode, double minpt, bool isfast)
     @author S.Chekanov 
     @version 1.0 02/02/14
 */
-std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
+std::vector<ParticleD*> SCJet::buildJets(std::vector<ParticleD*> &list)
 {
 
 	Timer tm;
@@ -92,8 +92,8 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 	if (m_debug)
 		tm.start();
 
-        double min12 = std::numeric_limits<double>::max(); // distance in a pair d_{12} 
-        double min1  = std::numeric_limits<double>::max(); // distance to the beam d_{iB}  
+	double min12 = std::numeric_limits<double>::max(); // distance in a pair d_{12}
+	double min1  = std::numeric_limits<double>::max(); // distance to the beam d_{iB}
 
 	// *****************************************
 	// build a  cache and find first closest pair
@@ -127,114 +127,114 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 	int Nstep = size;
 	//  cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
 	bool merged=false;
-        int j1 = -1;
-        int j2 = -1;
-        int km=-1;
-        int iter=0;
-        int i,j;
+	int j1 = -1;
+	int j2 = -1;
+	int km=-1;
+	int iter=0;
+	int i,j;
 
 	// start loop over all objects
 	while (Nstep > 0) {
 
-		min12 = std::numeric_limits<double>::max(); // distance in a pair d_{12} 
-                min1 =  std::numeric_limits<double>::max(); // distance to the beam d_{iB}  
+		min12 = std::numeric_limits<double>::max(); // distance in a pair d_{12}
+		min1 =  std::numeric_limits<double>::max(); // distance to the beam d_{iB}
 
-                // this is fast antiKT jet algorithm
-                // build pseudo-jet aroung particles with large pT
-                if (m_fast ==true) {   
+		// this is fast antiKT jet algorithm
+		// build pseudo-jet around particles with large pT
+		if (m_fast ==true) {
 
-		// find smallest d12.
-		// this is after reseting to a new jet
-		if (!merged) {
+			// find smallest d12.
+			// this is after reseting to a new jet
+			if (!merged) {
 
+				for (i=0; i < size-1; i++) {
+					if (is_consider[i]<=0) continue;
+					for (j=i+1; j < size; j++) {
+						if (is_consider[j]<=0) continue;
+						if (ktdistance12[i][j] < min12) {
+							min12 = ktdistance12[i][j];
+							j1 = i;
+							j2 = j;
+						}
+					}
+				}
+			} else {
+				// find another minimum around this jet  when j1>0
+				for (j=0; j < size; j++) {
+					if (is_consider[j]<=0 || j==j1) continue;
+					if (ktdistance12[j1][j] < min12) {
+						min12 = ktdistance12[j1][j];
+						j1 = j1;
+						j2 = j;
+					}
+				}
+			} // end of min finding
+
+
+			// find min distance to the beam
+			min1 = ktdistance1[j1];
+			if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
+
+			// protect against -1
+			if (merged==false && Nstep==1) break;
+
+			// make the decision about this particle
+			merged = false;
+			if (min12 < min1)  merged = true;
+
+
+
+		} else  {  // end fast antiKT
+			// start the usual kT algorithm..
+			// -----------------------------//
+
+
+			// find min distance to the beam
+			km =-1;
+			for (j = 0; j < size; j++) {
+				if (is_consider[j]<=0) continue;
+				if (ktdistance1[j] < min1) {
+					min1 = ktdistance1[j];
+					km = j;
+				}
+			}
+
+
+			j1=-1;
+			j2=-1;
+			// find smallest dij distances
 			for (i=0; i < size-1; i++) {
 				if (is_consider[i]<=0) continue;
 				for (j=i+1; j < size; j++) {
 					if (is_consider[j]<=0) continue;
-					if (ktdistance12[i][j] < min12) {
-						min12 = ktdistance12[i][j];
+					if (ktdistance12[i][j]<min1) {
+						min1=ktdistance12[i][j];
 						j1 = i;
 						j2 = j;
 					}
 				}
 			}
-		} else {
-			// find another minimum around this jet  when j1>0
-			for (j=0; j < size; j++) {
-				if (is_consider[j]<=0 || j==j1) continue;
-				if (ktdistance12[j1][j] < min12) {
-					min12 = ktdistance12[j1][j];
-					j1 = j1;
-					j2 = j;
-				}
-			}
-		} // end of min finding
 
 
-                // find min distance to the beam
-                min1 = ktdistance1[j1];
-                if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
-
-                // protect against -1
-                if (merged==false && Nstep==1) break;
-
-                  // make the decision about this particle
-                  merged = false;
-                 if (min12 < min1)  merged = true;
+			// make the decision about this particle
+			merged=false;
+			if (j1>-1 && j2>-1) merged=true;
 
 
-
-                } else  {  // end fast antiKT
-                // start the usual kT algorithm..
-                // -----------------------------//
-
-
-                // find min distance to the beam
-                km =-1;
-                for (j = 0; j < size; j++) {
-                        if (is_consider[j]<=0) continue;
-                        if (ktdistance1[j] < min1) {
-                                min1 = ktdistance1[j];
-                                km = j;
-                        }
-                 }
-
-
-                j1=-1;
-                j2=-1;
-                // find smallest dij distances
-                for (i=0; i < size-1; i++) {
-                        if (is_consider[i]<=0) continue;
-                        for (j=i+1; j < size; j++) {
-                                if (is_consider[j]<=0) continue;
-                                if (ktdistance12[i][j]<min1) {
-                                        min1=ktdistance12[i][j];
-                                        j1 = i;
-                                        j2 = j;
-                                }
-                        }
-                }
-
-
-                // make the decision about this particle
-                merged=false;
-                if (j1>-1 && j2>-1) merged=true;
-
- 
-                } // end standard kT
+		} // end standard kT
 
 
 
 
-                // merging ..
-		if (merged && j1 != j2) { 
+		// merging ..
+		if (merged && j1 != j2) {
 			//if (Nstep==1) cout << "Merge " << Nstep << " j1=" << j1 << " j2=" << j2<< endl;
 			ParticleD *p1 = list[j1];
 			ParticleD *p2 = list[j2];
 			p1->add(p2,j2); // p1=p1+p2. Also keeps an index j2
 			Nstep--;
 			list[j1] = p1;   // replaced with p1=p1+p2
-                        //list[j2] = NULL; // 
+			//list[j2] = NULL; //
 			is_consider[j2]=0; // p2, but keep in the list
 			is_consider[j1]=is_consider[j1]+1;
 			// recalculate distance for this particle
@@ -243,15 +243,15 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 				if (is_consider[i]<=0) continue;
 				ParticleD *pp1 = list[i];
 				ktdistance12[j1][i] = getKtDistance12(p1, pp1);
-                                if (m_mode <0) ktdistance12[i][j1] = getKtDistance12(p1, pp1);
+				if (m_mode <0) ktdistance12[i][j1] = getKtDistance12(p1, pp1);
 			}
 
 		}
 
 
-                // create a jet
+		// create a jet
 		if (!merged) {   // add this to the jet
-                        if (!m_fast) j1=km; // this is for KT and C/A
+			if (!m_fast) j1=km; // this is for KT and C/A
 			is_consider[j1] = -1;
 			ParticleD *pj = list[j1];
 			Nstep--;
@@ -269,7 +269,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 				std::string mess="original";
 				if (is_consider[i]==-1) mess="!final-jet!";
 				if (is_consider[i]>1) mess="(proto-jet)";
-                                if (is_consider[i]==0) mess="(removed)";
+				if (is_consider[i]==0) mess="(removed)";
 				cout << i << "  E=" << p1->e() << " " << mess << endl;
 			}
 		}
@@ -281,13 +281,13 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 
 	if (m_debug) cout << "Final Nr of iterations=" << iter << endl;
 
-	// attempt to deal with unmeargable particle
+	// attempt to deal with un-mearged particle
 	int ins=-1;
 	for (int i = 0; i < size; i++)
 	if (is_consider[i]==1) {ins=i;};
 
 	if (ins>-1) {
-		//cout << "working on the last unmerged particle " << endl;
+		//cout << "working on the last un-merged particle " << endl;
 		ParticleD *p2 = list[ins];
 		if (m_debug) cout << "Unmerged particle id=" << ins << " y=" << p2->getRapidity() << " phi=" <<  p2->getPhi() << " pt=" <<  p2->getPt() << endl;
 		min12 = std::numeric_limits<double>::max();
@@ -310,7 +310,7 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
 		int nn=0; int ins=-1;
 		for (int i = 0; i < size; i++)
 		if (is_consider[i]==1) {nn++; ins=i;};
-		if (nn != 0)   std::cout << "--> WARNING: particle with ID=" << ins<< " unmerged" << endl;
+		if (nn != 0)   std::cout << "--> WARNING: particle with ID=" << ins<< " un-merged" << endl;
 	}
 
 
@@ -331,15 +331,30 @@ std::vector<ParticleD*> KT::buildJets(std::vector<ParticleD*> &list)
     @author S.Chekanov 
     @version 1.0 02/02/14
 */
-std::vector<ParticleD*> KT::getJetsSorted() {
+std::vector<ParticleD*> SCJet::getJetsSorted() {
 	sort(jets.begin(), jets.end(), comp);
 	return jets;
 }
 
 
+// get deltaR distance
+double SCJet::getDistance(ParticleD *a, ParticleD *b)
+{
+        double rsq, deltaEta, deltaPhi;
+        deltaEta = b->getRapidity() - a->getRapidity();
+        double phi1 = a->getPhi();
+        double phi2 = b->getPhi();
+        deltaPhi = phi2 - phi1;
+        if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
+        if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
+        rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
+        return sqrt(rsq);
+}
+
+
 /** Print sorted jets
 */
-void KT::printJets() {
+void SCJet::printJets() {
 
 	std::vector<ParticleD*> sjets = getJetsSorted();
 
@@ -360,35 +375,17 @@ void KT::printJets() {
 
 }
 
-double KT::phiAngle(double phi)
-{
-	if (phi > PI2)
-	{
-		phi -= (PI2);
-	}
-	if (phi < -PI2)
-	{
-		phi += (PI2);
-	}
-	return phi;
-}
-
 
 // calculate KT distance between any 2 particles
-double KT::getKtDistance12(ParticleD *a, ParticleD *b)
+double SCJet::getKtDistance12(ParticleD *a, ParticleD *b)
 {
 	double rsq, esq, deltaEta, deltaPhi;
 	deltaEta = b->getRapidity() - a->getRapidity();
 	double phi1 = a->getPhi();
 	double phi2 = b->getPhi();
-	// deltaPhi = phiAngle(phi2 - phi1);
 	deltaPhi = phi2 - phi1;
 	if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
 	if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
-	//deltaPhi = phi2 - phi1;
-	//if(deltaPhi >= PI) deltaPhi = std::fmod(PI+deltaPhi, PI2) - PI;
-	//else if(deltaPhi < -PI) deltaPhi = -std::fmod(PI-deltaPhi, PI2) + PI;
-
 
 	rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
 	esq = 0;
@@ -413,22 +410,9 @@ double KT::getKtDistance12(ParticleD *a, ParticleD *b)
 }
 
 
-// get deltaR distance
-double KT::getDistance(ParticleD *a, ParticleD *b)
-{
-	double rsq, deltaEta, deltaPhi;
-	deltaEta = b->getRapidity() - a->getRapidity();
-	double phi1 = a->getPhi();
-	double phi2 = b->getPhi();
-	deltaPhi = phi2 - phi1;
-	if (deltaPhi>PI) deltaPhi=PI2-deltaPhi;
-	if (deltaPhi<-PI) deltaPhi=PI2+deltaPhi;
-	rsq = (deltaEta*deltaEta + deltaPhi*deltaPhi);
-	return sqrt(rsq);
-}
 
 // calculate distance to the beam
-double KT::getKtDistance1(ParticleD *a)
+double SCJet::getKtDistance1(ParticleD *a)
 {
 	if (m_mode == 1)
 	{
@@ -447,7 +431,7 @@ double KT::getKtDistance1(ParticleD *a)
 
 
 // set debugging mode
-void KT::setDebug(bool debug)
+void SCJet::setDebug(bool debug)
 {
 
 	m_debug = debug;

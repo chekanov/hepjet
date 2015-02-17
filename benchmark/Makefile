@@ -8,8 +8,8 @@ CXXFLAGS=-O2
 
 all: benchmark
 
-benchmark: KT.o ParticleD.o benchmark.o fjcore.o
-	$(CXX) $(LDFLAGS) -o $@ $@.o fjcore.o KT.o ParticleD.o
+benchmark: SCJet.o ParticleD.o benchmark.o fjcore.o
+	$(CXX) $(LDFLAGS) -o $@ $@.o fjcore.o SCJet.o ParticleD.o
 
 run:
 	./benchmark < ../data/single-event.dat
