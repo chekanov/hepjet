@@ -40,7 +40,8 @@ In summary: <b>fastjet</b> is  about a factor 8 faster than <b>scjet_cpp</b> whe
 but failed for more than 1000 particles.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than for the C++ version due to the JIT compilation).
-Other similar algorithms are slower. When using the kT mode, <b>scjet_java</b> is as slow as  <b>ktjet</b>. 
+Other similar algorithms are slower. When using the kT mode, the fast mode is disabled
+and <b>scjet_java</b> has the same speed as <b>ktjet</b>. 
 
 <p>
 </p>
