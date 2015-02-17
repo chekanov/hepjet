@@ -1,14 +1,10 @@
-# How to run a C++ code for KT algorithms taken from NLOjet++:
+# How to run a C++ code for KT algorithms taken from NLOjet++ (Z.Nagy). 
+# The code was extracted from the NLOJet++ program used
+# for jet measurements. The NLOjet++ web site is http://www.desy.de/~znagy/Site/NLOJet++.html
 # S.Chekanov (ANL) 
 
 make
 make run # runs using ../data/single-event.dat
 
-
-
-# Or using manually:
-# standard file..
+# Or using any file: 
 ./main < ../data/single-event.dat
-
-# using large event
-./main < ../data/single-event-large.dat

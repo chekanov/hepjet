@@ -1,23 +1,19 @@
-This is an implementation of SCjet jet algorithm in Java
+This is an implementation of the SCJet jet algorithm in Java. 
 The code supports kT, anti-kT and C/A jet clustering algorithms.
 Author:  S.Chekanov (ANL) 
 License: GNU public license
 
-Note: Unlike C++ version, we run this algorithm several times
-to find out the runtime (which is similar to C++ version for
-several events)
+Note: Unlike the C++ version, we run this algorithm several times
+to find out the correct runtime (due to JIT compilation).
+The runtime after a few iterations should be similar to the C++ implementation.
 
-How to run the KT jet using Java:
+
+How to run the SCJet jet using Java:
 
 # compile
 javac *.java
 # or type : make
 
-# Run the code:
-java KT ../data/single-event.dat
+# Run the anti-kT jet code:
+java SCJet ../data/single-event.dat
 # or type:  make run
-
-
-# large sample
-java KT ../data/single-event-large.dat
-

@@ -1,12 +1,9 @@
 # This example runs PGjet C++ algorithm using an input data
-# Ivan Pogrebnyak and Sergei Chekanov 
+# It does not use any cache and use slow std:set to find minima.
+# @authors: Ivan Pogrebnyak and Sergei Chekanov 
 
 make
 make run # runs using ../data/single-event.dat
 
-# Or using manually:
-# standard file..
+# Usinng any file..
 ./main < ../data/single-event.dat
-
-# using large event
-./main < ../data/single-event-large.dat

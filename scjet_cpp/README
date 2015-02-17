@@ -1,16 +1,15 @@
-This is an implementation of SCjet jet algorithm in C++. 
+This is an implementation of SCJet jet algorithm in C++. 
 The code supports kT, anti-kT and C/A jet clustering algorithms.
+The "slow" mode for anti-KT has the same output as the FastJet.
+The "fast" mode may have some differences for very soft jets 
+(typically, for N(jet)>5).
+
 Author:  S.Chekanov (ANL)  
 License: GNU public license
-
 
 # How to run:
 make
 make run # runs using ../data/single-event.dat
 
-# Or using manually:
-# standard file..
+# Or for any file:
 ./main < ../data/single-event.dat
-
-# using large event
-./main < ../data/single-event-large.dat

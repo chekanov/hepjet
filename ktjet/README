@@ -7,9 +7,4 @@ make     # compile
 make run # run benchmark test
 
 # for orbitrary input file
-
 ./main < ../data/single-event.dat
-
-# using large event
-./main < ../data/single-event-large.dat
-
