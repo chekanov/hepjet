@@ -67,7 +67,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 	/**
 	 * Compute pseudorapidity.
 	 * 
-	 * @return
+	 * @return  pseudorapidity. 
 	 */
 	public double eta() {
 		if (px == 0.0 && py == 0.0)
@@ -83,6 +83,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Compute transverse energy squared.
+         * @return transverse energy squared.
 	 */
 	public double et2() {
 		double pt2x = perp2();
@@ -93,17 +94,37 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 	/**
 	 * Compute transverse energy.
 	 * 
-	 * @return
+	 * @return transverse energy. 
 	 */
 	public double et() {
 		double etet = et2();
 		return e() < 0.0 ? -Math.sqrt(etet) : Math.sqrt(etet);
 	}
 
+        /**
+         * Compute mass.
+         * 
+         * @return mass 
+         */
+        public double mass() {
+                double m=energy*energy-px*px-py*py-pz*pz;
+                if (m>=0) return Math.sqrt(m);
+                return -1; 
+        }
+
+        /**
+         * Compute mass.
+         * 
+         * @return mass 
+         */
+        public double m() {
+                return mass();
+        }
+
 	/**
 	 * Compute rapidity. 0.5*log( (m+z)/(m-z) );
 	 * 
-	 * @return
+	 * @return rapidity 
 	 */
 	public double rapidity() {
 		rapidity = -10e10;
@@ -115,39 +136,44 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 	/**
 	 * Compute magnitude sqrt(px**2+py**2+pz**2)
 	 * 
-	 * @return
+	 * @return mag 
 	 */
 	public double mag() {
 		return Math.sqrt(px * px + py * py + pz * pz);
 	}
 
 	/**
-	 * Compute pT**2
+	 * Compute pT**2. 
 	 * 
-	 * @return
+	 * @return pt**2 
 	 */
 	public double perp2() {
 		return (px * px + py * py);
 	}
 
 	/**
-	 * Compute Transverse momentum (pT)
+	 * Compute transverse momentum (pT). 
 	 * 
-	 * @return
+	 * @return Transverse momentum (pt) 
 	 */
 	public double perp() {
 		return Math.sqrt(perp2());
 	}
 
+
+         /**
+         * Set energy.
+         * @return Transverse momentum (pt) 
+         */
 	public void setEnergy(double energy) {
 		this.energy = energy;
 
 	}
 
 	/**
-	 * Comparator. using perp2 for comparison (in increasing order)
+	 * Comparator. Use pT2  for comparison (in increasing order)
 	 * 
-	 * @param o
+	 * @param o particle 
 	 * @return
 	 */
 	public int compareTo(ParticleD o) {

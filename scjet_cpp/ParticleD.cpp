@@ -13,6 +13,7 @@ ParticleD::ParticleD(double px, double py, double pz, double ene) : m_px(px), m_
 }
 
 
+// set momenta.
 void ParticleD::setPxPyPzE(double m_px, double m_py, double m_pz, double energy)
 {
 	this->m_px = m_px;
@@ -22,6 +23,7 @@ void ParticleD::setPxPyPzE(double m_px, double m_py, double m_pz, double energy)
 	cachePhiRapidity();
 }
 
+// compute pseudo-rapidity
 double ParticleD::eta()
 {
 	if (m_px == 0.0 && m_py == 0.0)
@@ -41,6 +43,7 @@ double ParticleD::eta()
 	return -1*log(tan(theta / 2));
 }
 
+// compute ET2
 double ParticleD::et2()
 {
       double pt2x = perp2();
@@ -48,12 +51,14 @@ double ParticleD::et2()
       return m_et2;
 }
 
+// compute ET
 double ParticleD::et()
 {
 	double etet = et2();
 	return e() < 0.0 ? - sqrt(etet) : sqrt(etet);
 }
 
+// compure rapidity.
 double ParticleD::rapidity()
 {
 	m_rapidity = -10e10;
@@ -64,17 +69,37 @@ double ParticleD::rapidity()
 	return m_rapidity;
 }
 
+// compute magnitude.
 double ParticleD::mag()
 {
 	return sqrt(m_px*m_px + m_py*m_py + m_pz*m_pz);
 }
 
+// compute pT**2
 double ParticleD::perp2()
 {
         m_pt2=m_px*m_px + m_py*m_py;
 	return m_pt2;
 }
 
+// compute mass. 
+double ParticleD::mass()
+{
+        double m=energy*energy-m_px*m_px-m_py*m_py-m_pz*m_pz;
+        if (m>=0) return sqrt(m); 
+        return -1;
+ 
+}
+
+// compute mass. 
+double ParticleD::m()
+{
+        return mass();
+
+}
+
+
+// compute pT
 double ParticleD::perp()
 {
 	return sqrt(perp2());
