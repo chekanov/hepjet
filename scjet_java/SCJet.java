@@ -247,8 +247,9 @@ public class SCJet {
 
 
                 // find min distance to the beam
-                min1 = ktdistance1[j1];
-                if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
+                if (j1>-1) min1 = ktdistance1[j1];
+                if (j2>-1)
+                   if (ktdistance1[j2]<min1) {min1 = ktdistance1[j2];};
 
                 // protect against -1
                 if (merged==false && Nstep==1) break;
