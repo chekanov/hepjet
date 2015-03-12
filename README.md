@@ -28,7 +28,7 @@ using the input file with 1000 particles (data/single-event.dat) for a 100 pp co
 (ttbar, pT>8 TeV). The processing time:
 
  <ul>
-  <li>fastjet    - ? msec (failed) </li>
+  <li>fastjet    - 3 msec </li>
   <li>scjet_cpp -  105 msec (fast N^2 mode) or 990 msec (the standard N^3 mode) </li>   
   <li>scjet_java - 103 msec (after multiple runs, fast mode) </li>
   <li>nlojet    - ? (failed). Used by NLOjet++</li>
@@ -36,8 +36,7 @@ using the input file with 1000 particles (data/single-event.dat) for a 100 pp co
   <li>pgjet_cpp - 4756 ms msec (no cache, using std::set)</li>
 </ul> 
 
-In summary: <b>fastjet</b> is  about a factor 8 faster than <b>scjet_cpp</b> when using about 350 input particles,
-but failed for more than 1000 particles.
+In summary: <b>fastjet</b> is  about a factor 30 faster than <b>scjet_cpp</b>.
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than for the C++ version due to the JIT compilation).
 Other similar algorithms are slower. When using the kT mode, the fast mode is disabled

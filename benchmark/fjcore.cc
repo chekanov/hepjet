@@ -1,4 +1,4 @@
-// fjcore -- extracted from FastJet v3.1.1 (http://fastjet.fr)
+// fjcore -- extracted from FastJet v3.1.2 (http://fastjet.fr)
 //
 // fjcore constitutes a digest of the main FastJet functionality.
 // The files fjcore.hh and fjcore.cc are meant to provide easy access to these 
@@ -817,6 +817,7 @@ FJCORE_END_NAMESPACE
 #ifndef __FJCORE_LAZYTILING9ALT_HH__
 #define __FJCORE_LAZYTILING9ALT_HH__
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
+const double tile_edge_security_margin=1.0e-7;
 class TiledJet {
 public:
   double     eta, phi, kt2, NN_dist;
@@ -1515,6 +1516,7 @@ void ClusterSequence::_initialise_and_run_no_decant () {
     LazyTiling9 tiling(*this);
     tiling.run();
     _plugin_activated = false;
+  } else if (_strategy == N2MHTLazy9AntiKtSeparateGhosts) {
     throw Error("N2MHTLazy9AntiKtSeparateGhosts strategy not supported with FJCORE");
   } else if (_strategy == NlnN) {
     this->_delaunay_cluster();
@@ -2129,8 +2131,16 @@ void ClusterSequence::_add_step_to_history (
   int local_step = _history.size()-1;
   assert(local_step == step_number);
   assert(parent1 >= 0);
+  if (_history[parent1].child != Invalid){
+    throw InternalError("trying to recomine an object that has previsously been recombined");
+  }
   _history[parent1].child = local_step;
-  if (parent2 >= 0) {_history[parent2].child = local_step;}
+  if (parent2 >= 0) {
+    if (_history[parent2].child != Invalid){
+      throw InternalError("trying to recomine an object that has previsously been recombined");
+    }
+    _history[parent2].child = local_step;
+  }
   if (jetp_index != Invalid) {
     assert(jetp_index >= 0);
     _jets[jetp_index].set_cluster_hist_index(local_step);
@@ -5126,7 +5136,7 @@ inline void LazyTiling25::_add_untagged_neighbours_to_tile_union_using_max_info(
   Tile25 & tile = _tiles[jet->tile_index];
   for (Tile25 ** near_tile = tile.begin_tiles; near_tile != tile.end_tiles; near_tile++){
     if ((*near_tile)->tagged) continue;
-    double dist = _distance_to_tile(jet, *near_tile);
+    double dist = _distance_to_tile(jet, *near_tile) - tile_edge_security_margin;
     if (dist > (*near_tile)->max_NN_dist) continue;
     (*near_tile)->tagged = true;
     tile_union[n_near_tiles] = *near_tile - & _tiles[0];
@@ -5511,7 +5521,7 @@ inline void LazyTiling9::_add_untagged_neighbours_to_tile_union_using_max_info(
   Tile2 & tile = _tiles[jet->tile_index];
   for (Tile2 ** near_tile = tile.begin_tiles; near_tile != tile.end_tiles; near_tile++){
     if ((*near_tile)->tagged) continue;
-    double dist = _distance_to_tile(jet, *near_tile);
+    double dist = _distance_to_tile(jet, *near_tile) - tile_edge_security_margin;
     if (dist > (*near_tile)->max_NN_dist) continue;
     (*near_tile)->tagged = true;
     tile_union[n_near_tiles] = *near_tile - & _tiles[0];
@@ -5890,7 +5900,7 @@ inline void LazyTiling9Alt::_add_untagged_neighbours_to_tile_union_using_max_inf
   Tile & tile = _tiles[jet->tile_index];
   for (Tile::TileFnPair * near_tile = tile.begin_tiles; near_tile != tile.end_tiles; near_tile++){
     if ((near_tile->first)->tagged) continue;
-    double dist = (tile.*(near_tile->second))(jet);
+    double dist = (tile.*(near_tile->second))(jet) - tile_edge_security_margin;
     if (dist > (near_tile->first)->max_NN_dist) continue;
     (near_tile->first)->tagged = true;
     tile_union[n_near_tiles] = near_tile->first - & _tiles[0];

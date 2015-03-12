@@ -1,4 +1,4 @@
-// fjcore -- extracted from FastJet v3.1.1 (http://fastjet.fr)
+// fjcore -- extracted from FastJet v3.1.2 (http://fastjet.fr)
 //
 // fjcore constitutes a digest of the main FastJet functionality.
 // The files fjcore.hh and fjcore.cc are meant to provide easy access to these 

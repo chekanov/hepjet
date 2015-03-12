@@ -1,4 +1,4 @@
-// fjcore -- extracted from FastJet v3.1.1 (http://fastjet.fr)
+// fjcore -- extracted from FastJet v3.1.2 (http://fastjet.fr)
 //
 // fjcore constitutes a digest of the main FastJet functionality.
 // The files fjcore.hh and fjcore.cc are meant to provide easy access to these 
@@ -195,19 +195,19 @@ FJCORE_END_NAMESPACE
 #define FJCORE_PACKAGE_NAME  "FastJet" 
 #endif
 #ifndef FJCORE_PACKAGE_STRING 
-#define FJCORE_PACKAGE_STRING  "FastJet 3.1.1" 
+#define FJCORE_PACKAGE_STRING  "FastJet 3.1.2" 
 #endif
 #ifndef FJCORE_PACKAGE_TARNAME 
 #define FJCORE_PACKAGE_TARNAME  "fastjet" 
 #endif
 #ifndef FJCORE_PACKAGE_VERSION 
-#define FJCORE_PACKAGE_VERSION  "3.1.1" 
+#define FJCORE_PACKAGE_VERSION  "3.1.2" 
 #endif
 #ifndef FJCORE_STDC_HEADERS 
 #define FJCORE_STDC_HEADERS  1 
 #endif
 #ifndef FJCORE_VERSION 
-#define FJCORE_VERSION  "3.1.1" 
+#define FJCORE_VERSION  "3.1.2" 
 #endif
 #ifndef FJCORE_VERSION_MAJOR 
 #define FJCORE_VERSION_MAJOR  3 
@@ -216,10 +216,10 @@ FJCORE_END_NAMESPACE
 #define FJCORE_VERSION_MINOR  1 
 #endif
 #ifndef FJCORE_VERSION_NUMBER 
-#define FJCORE_VERSION_NUMBER  30101 
+#define FJCORE_VERSION_NUMBER  30102 
 #endif
 #ifndef FJCORE_VERSION_PATCHLEVEL 
-#define FJCORE_VERSION_PATCHLEVEL  1 
+#define FJCORE_VERSION_PATCHLEVEL  2 
 #endif
 #endif
 #ifndef __FJCORE_CONFIG_H__
@@ -429,6 +429,10 @@ private:
 #if (!defined(FJCORE_HAVE_EXECINFO_H)) || defined(__FJCORE__)
   static LimitedWarning _execinfo_undefined;
 #endif
+};
+class InternalError : public Error{
+public:
+  InternalError(const std::string & message_in) : Error(std::string("*** CRITICAL INTERNAL FASTJET ERROR *** CONTACT THE AUTHORS *** ") + message_in){ }
 };
 FJCORE_END_NAMESPACE
 #endif // __FJCORE_ERROR_HH__
