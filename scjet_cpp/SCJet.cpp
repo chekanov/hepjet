@@ -27,7 +27,7 @@ bool comp(ParticleD* rhs1, ParticleD* rhs2) {
     @param R distance parameter
     @param recom recombination mode. Only recom=1 is supported (E-scheme, p=p1+p2) 
     @param mode defines the algorithm. 1 means KT, -1 is anti-KT, 0 is Cambridge/Aachen
-    @param isfast. if true, use N*N algorithm for anti-kT. If false, use the traditional that scales as N^3. 
+    @param isfast. if true, a seeded algorithm is enabled (faster). If false, use the traditional that scales as N^3. 
     @author S.Chekanov 
     @version 1.0 02/02/14
 */
@@ -64,11 +64,11 @@ SCJet::SCJet(double R, int recom, int mode, double minpt, bool isfast)
 	}
 
 	if (m_fast ==true && m_mode==-1){
-		std::cout <<  "SCjet: Fast mode for anti-kT is enabled." << endl;
+		std::cout <<  "SCjet: Seeded mode for anti-kT is enabled (faster)." << endl;
 	}
 
 	if (m_fast ==true && m_mode>=0) {
-		std::cout << "SCjet: Currently, the fast mode is enabled for anti-KT jets. Exit." <<  std::endl;
+		std::cout << "SCjet: Currently, the seeded mode is enabled for anti-KT jets. Exit." <<  std::endl;
 		exit(0);
 	}
 

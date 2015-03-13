@@ -65,7 +65,7 @@ public class SCJet {
 	 * @param minpt
 	 *            min pT for final jets.
          * @param isfast
-         *           if true, use a faster algorithm for anti-kT that scales similar to N*N. If false, use the traditional that scales as N^3.
+         *           if true, use seeded algorithm for anti-kT (faster). If false, use the traditional that scales as N^3.
 	 */
 	public SCJet(double R, int recom, int mode, double minpt, boolean isfast) {
 		this.R = R;
@@ -105,11 +105,11 @@ public class SCJet {
         }
 
           if (m_fast ==false && mode==-1){
-             System.out.println("SCjet: Fast mode for anti-kT is disabled.");
+             System.out.println("SCjet: Seeded mode for anti-kT is disabled (faster).");
         }
 
         if (m_fast ==true && mode>=0) {
-           System.out.println("SCjet: Currently, the fast mode is enabled for anti-kT jets. Exit."); 
+           System.out.println("SCjet: Currently, the seeded mode is enabled for anti-kT jets. Exit."); 
            System.exit(0);
         }
 

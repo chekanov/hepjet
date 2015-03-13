@@ -36,7 +36,7 @@ using the input file with 1000 particles (data/single-event.dat) for a 100 pp co
   <li>pgjet_cpp - 4756 ms msec (no cache, using std::set)</li>
 </ul> 
 
-In summary: <b>fastjet</b> is  about a factor 30 faster than <b>scjet_cpp</b>.
+In summary: <b>fastjet</b> is  about a factor 30 faster than <b>scjet_cpp</b> (seeded).
 The Java implementation (<b>scjet_java</b>) is as fast as the C++ version when using more than one run           
 over events (first run is a factor 4 slower than for the C++ version due to the JIT compilation).
 Other similar algorithms are slower. When using the kT mode, the fast mode is disabled
@@ -46,10 +46,9 @@ and <b>scjet_java</b> has the same speed as <b>ktjet</b>.
 </p>
 
 There are some differences in the output jets between different implementations. 
-The difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations 
-can be at the level of 2% for transverse momentum of very soft jets due to an ambiguity
-of merging some low-pT particles when using N^2 algorithm ("fast mode").
-For the standard N^3 mode, <b>scjet_cpp</b> and <b>fastjet</b> have identical outputs. 
+There is no difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations.
+For the seeded option,  
+differences can be at the level of 2% for transverse momentum of very soft jets.
 The difference between <b>nlojet</b> and  <b>fastjet</b> is also at the level of a few percents. 
 No difference is found between <b>fastjet</b> and  <b>ktjet</b> implementations. 
 
