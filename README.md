@@ -7,6 +7,7 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 <b>fastjet</b>       - the official FastJet implementation <br>
 <b>ktjet</b>         - a modified KtJet (C++) benchmark code. Works in the anti-KT  mode<br>
 <b>nlojet</b>        - implementation of kT-jets from NLOjet++ <br>
+<b>jetn2_java</b>    - a Java implementation of the jet algorithm by I.Pogrebnyak using the N*2 FastJet approach. 
 <b>scjet_cpp</b>     - SCJet. An alternative implementation of kT-jet / anti-kT clustering in C++<br>
 <b>scjet_java</b>    - implementation of the SCJet jet algorithm in Java. <br>
 <b>benchmark</b>    -  compare FastJet and SCJet implementations using the same input.<br>
@@ -16,10 +17,11 @@ All algorithms run the anti-kT jet algorithm. One can also run the standard kT a
 <p>
 
 FastJet and KtJet C++ codes used by this library are taken  from the orinal <a href="http://fastjet.fr/">FastJet</a> and <a href="https://ktjet.hepforge.org/">KtJet</a> web pages. 
-SCjet is a light-weight implementation of the anti-kT algorithms for jet validation used by the 
+JetN2 is a light-weight implementation of the anti-kT algorithms for jet validation used by the 
 <a href="http://atlaswww.hep.anl.gov/hepsim/">HepSim</a> Monte Carlo database.
 More details can be found in <a href="https://github.com/chekanov/hephysics">HePhysics package</a>. 
-The Java implementation of SCJet is available from the <a href="http://jwork.org/scavis/">SCaVis data-analysis</a> program. 
+The algorithm was implemented by I.Pogrebnyak in https://github.com/ivankp/javaN2jet. 
+The Java implementation of SCJet and JetN2 is available from the <a href="http://jwork.org/scavis/">SCaVis data-analysis</a> program. 
 
 <h2>Benchmark results</h2>
 
@@ -29,6 +31,7 @@ using the input file with 1000 particles (data/single-event.dat) for a 100 pp co
 
  <ul>
   <li>fastjet    - 3 msec </li>
+  <li>jetn2_java - 15 msec using FastJet N** approach</li>
   <li>scjet_cpp -  105 msec (fast N^2 mode) or 990 msec (the standard N^3 mode) </li>   
   <li>scjet_java - 103 msec (after multiple runs, fast mode) </li>
   <li>nlojet    - ? (failed). Used by NLOjet++</li>
@@ -45,8 +48,9 @@ and <b>scjet_java</b> has the same speed as <b>ktjet</b>.
 <p>
 </p>
 
+
 There are some differences in the output jets between different implementations. 
-There is no difference between <b>scjet_cpp</b> and <b>fastjet</b> implementations.
+There is no difference between <b>scjet_cpp</b>,  and <b>fastjet</b> implementations.
 For the seeded option,  
 differences can be at the level of 2% for transverse momentum of very soft jets.
 The difference between <b>nlojet</b> and  <b>fastjet</b> is also at the level of a few percents. 
