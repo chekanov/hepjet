@@ -1,3 +1,4 @@
+
 import java.util.*;
 import java.io.*;
 
@@ -32,7 +33,7 @@ class ClusterSequence {
 			this.alg = 1;
 		else if (alg.equalsIgnoreCase("antikt"))
 			this.alg = 2;
-		else if (alg.equalsIgnoreCase("cambridge"))
+		else if (alg.equalsIgnoreCase("ca"))
 			this.alg = 3;
 		else {
 			System.out.println("Warning: Unrecognized clustering algorithm: "

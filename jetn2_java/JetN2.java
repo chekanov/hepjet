@@ -50,14 +50,14 @@ public class JetN2 {
 	 * @param recom
 	 *            recombination scheme.<br>
 	 *            1: The E-scheme Simple 4-vector addition. <br>
-	 *            2: The pT-scheme. <br>
-	 *            3: The pT^2 scheme. <br>
+	 *            2: The pT-scheme (not implemented) <br>
+	 *            3: The pT^2 scheme (not implemented) <br>
 	 *            Currently only E-scheme is implemented.
 	 * @param type
-	 *            [kt,antikt,cambridge] <br>
+	 *            [kt,antikt,ca] <br>
 	 *            clustering mode dij=min(kT_i^{2* mode},kT_j^{2* mode})). <br>
 	 *            kt : means inclusive kT jet algorithm <br>
-	 *            cambridge: means Cambridge/Aachen jet algorithm <br>
+	 *            ca: means Cambridge/Aachen jet algorithm <br>
 	 *            antikt: means anti-KT jet algorithm <br>
 	 * @param minpt
 	 *            min pT for final jets.
@@ -77,17 +77,19 @@ public class JetN2 {
 		System.out
 				.println("JetN2: Inclusive mode using the E-scheme recombination and R="
 						+ rs);
-		if (type.equals("kt"))
+		if (type.equalsIgnoreCase("kt"))
 			System.out.println("JetN2: Longitudinally invariant kt algorithm");
-		else if (type.equals("antikt"))
+		else if (type.equalsIgnoreCase("ca"))
 			System.out.println("JetN2: Cambridge/Aachen algorithm");
-		else if (type.equals("cambridge"))
+		else if (type.equalsIgnoreCase("antikt"))
 			System.out
 					.println("JetN2: Longitudinally invariant anti-kt algorithm");
-		else
+		else { 
+                        this.type="antikt";
 			System.out
 					.println("JetN2: Not correct mode:  Fallback to the inclusive kT algorithm using E-scheme and R="
 							+ rs);
+                     }
 
 		if (recom != 1) {
 			System.out
@@ -95,7 +97,7 @@ public class JetN2 {
 			System.exit(0);
 		}
 
-		seq = new ClusterSequence(type, R);
+		seq = new ClusterSequence(this.type, R);
 
 	}
 
