@@ -30,7 +30,6 @@ public class JetN2 {
 
 	private int recom = 1;
 	private double R;
-	private double R2;
 	private final double PI2 = Math.PI * 2;
 	private boolean debug = false;
 	private double minpt = 0;
@@ -64,7 +63,6 @@ public class JetN2 {
 	 */
 	public JetN2(double R, int recom, String type, double minpt) {
 		this.R = R;
-		this.R2 = (R * R);
 		this.recom = recom;
 		this.debug = false;
 		this.minpt = minpt;
@@ -73,7 +71,10 @@ public class JetN2 {
 		DecimalFormat formatter1 = new DecimalFormat("#0.00");
 		String rs = formatter1.format(this.R);
 		System.out
-				.println("JetN2: Initialization of Java jet algorithm. S.Chekanov (ANL)");
+				.println("JetN2: Initialization of Java jet algorithm.");
+                System.out
+                                .println("JetN2: Authors: S.Chekanov (ANL),I.Pogrebnyak (MSU)");
+
 		System.out
 				.println("JetN2: Inclusive mode using the E-scheme recombination and R="
 						+ rs);
@@ -100,6 +101,11 @@ public class JetN2 {
 		seq = new ClusterSequence(this.type, R);
 
 	}
+
+
+
+
+
 
 	/**
 	 * Initialize calculations of the kT algorithm. Meaningful values are R=0.2-
@@ -206,6 +212,46 @@ public class JetN2 {
 			System.out.println("Debug mode is ON");
 		this.debug = debug;
 	}
+
+
+         /**
+         * Return information about the jet setting. 
+         * 
+         * @param info 
+         *            Information on the current settings. 
+         */
+        public String info() {
+
+
+               DecimalFormat formatter1 = new DecimalFormat("#0.00");
+               String rs = formatter1.format(this.R);
+
+               String tmp="";
+               tmp=tmp+"JetN2: Initialization of Java jet algorithm:\n";
+               tmp=tmp+"JetN2: authors: S.Chekanov (ANL),I.Pogrebnyak (MSU)\n"; 
+               tmp=tmp+"JetN2: Inclusive mode using the E-scheme recombination and R="
+                                                + rs+"\n";
+                if (type.equalsIgnoreCase("kt"))
+                        tmp=tmp+"JetN2: Longitudinally invariant kt algorithm\n";
+                else if (type.equalsIgnoreCase("ca"))
+                        tmp=tmp+"JetN2: Cambridge/Aachen algorithm";
+                else if (type.equalsIgnoreCase("antikt"))
+                         tmp=tmp+"JetN2: Longitudinally invariant anti-kt algorithm\n";
+                else {
+                        this.type="antikt";
+                        tmp=tmp+"JetN2: Not correct mode:  Fallback to the inclusive antikT algorithm using E-scheme and R="+ rs+"\n"; 
+                     }
+
+                if (recom != 1) {
+                       
+                        tmp=tmp+"JetN2: Only E-scheme recombination supported! Exit.";
+                        System.exit(0);
+                }
+
+                return tmp;
+        }
+
+
 
 	/**
 	 * Main class for testing.
