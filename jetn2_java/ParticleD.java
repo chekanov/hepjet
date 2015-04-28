@@ -7,9 +7,9 @@ import java.util.*;
  * precision). It uses double types to keep information on 4-meomenta. The
  * merging is done in the 4-momentum space. The class has a minimum dynamic
  * computation to minimize CPU usage.
- * 
+ *
  * @author S.Chekanov
- * 
+ *
  */
 public class ParticleD implements Comparable<ParticleD>, Serializable {
 
@@ -24,7 +24,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Initialize pseudoparticle.
-	 * 
+	 *
 	 */
 	public ParticleD() {
 		consts = new ArrayList<Integer>();
@@ -32,7 +32,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Initialize from 4-momenta.
-	 * 
+	 *
 	 * @param px
 	 * @param py
 	 * @param pz
@@ -45,12 +45,12 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 		this.energy = energy;
 		cachePhiRapidity();
 		consts = new ArrayList<Integer>();
-		consts.add(new Integer(-1));
+		consts.add(new Integer(-1)); // это для чего?
 	}
 
 	/**
 	 * Initialize from 4-momenta.
-	 * 
+	 *
 	 * @param px
 	 * @param py
 	 * @param pz
@@ -66,8 +66,8 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Compute pseudorapidity.
-	 * 
-	 * @return  pseudorapidity. 
+	 *
+	 * @return  pseudorapidity.
 	 */
 	public double eta() {
 		if (px == 0.0 && py == 0.0)
@@ -93,8 +93,8 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Compute transverse energy.
-	 * 
-	 * @return transverse energy. 
+	 *
+	 * @return transverse energy.
 	 */
 	public double et() {
 		double etet = et2();
@@ -103,19 +103,19 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
         /**
          * Compute mass.
-         * 
-         * @return mass 
+         *
+         * @return mass
          */
         public double mass() {
                 double m=energy*energy-px*px-py*py-pz*pz;
                 if (m>=0) return Math.sqrt(m);
-                return -1; 
+                return -1;
         }
 
         /**
          * Compute mass.
-         * 
-         * @return mass 
+         *
+         * @return mass
          */
         public double m() {
                 return mass();
@@ -123,8 +123,8 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Compute rapidity. 0.5*log( (m+z)/(m-z) );
-	 * 
-	 * @return rapidity 
+	 *
+	 * @return rapidity
 	 */
 	public double rapidity() {
 		rapidity = -10e10;
@@ -135,26 +135,26 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Compute magnitude sqrt(px**2+py**2+pz**2)
-	 * 
-	 * @return mag 
+	 *
+	 * @return mag
 	 */
 	public double mag() {
 		return Math.sqrt(px * px + py * py + pz * pz);
 	}
 
 	/**
-	 * Compute pT**2. 
-	 * 
-	 * @return pt**2 
+	 * Compute pT**2.
+	 *
+	 * @return pt**2
 	 */
 	public double perp2() {
 		return (px * px + py * py);
 	}
 
 	/**
-	 * Compute transverse momentum (pT). 
-	 * 
-	 * @return Transverse momentum (pt) 
+	 * Compute transverse momentum (pT).
+	 *
+	 * @return Transverse momentum (pt)
 	 */
 	public double perp() {
 		return Math.sqrt(perp2());
@@ -163,7 +163,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
          /**
          * Set energy.
-         * @return Transverse momentum (pt) 
+         * @return Transverse momentum (pt)
          */
 	public void setEnergy(double energy) {
 		this.energy = energy;
@@ -172,8 +172,8 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Comparator. Use pT2  for comparison (in increasing order)
-	 * 
-	 * @param o particle 
+	 *
+	 * @param o particle
 	 * @return
 	 */
 	public int compareTo(ParticleD o) {
@@ -186,7 +186,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Copy a particle.
-	 * 
+	 *
 	 * @param o
 	 * @return a copy of particle
 	 */
@@ -200,7 +200,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Convert a particle to a string.
-	 * 
+	 *
 	 * @return a string with the particle
 	 */
 	public String toString() {
@@ -217,7 +217,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get px.
-	 * 
+	 *
 	 * @return px component
 	 */
 	public double px() {
@@ -226,7 +226,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get py.
-	 * 
+	 *
 	 * @return py component
 	 */
 	public double py() {
@@ -235,7 +235,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get pz.
-	 * 
+	 *
 	 * @return pz component
 	 */
 	public double pz() {
@@ -244,7 +244,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get cached rapidity
-	 * 
+	 *
 	 * @return rapidity
 	 */
 	public double getRapidity() {
@@ -253,7 +253,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get cached perp**2.
-	 * 
+	 *
 	 * @return perp2.
 	 */
 	public double getPt2() {
@@ -262,7 +262,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get cached Pt.
-	 * 
+	 *
 	 * @return et transverse energy
 	 */
 	public double getPt() {
@@ -271,7 +271,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get cached phi
-	 * 
+	 *
 	 * @return cached phi
 	 */
 	public double getPhi() {
@@ -280,7 +280,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get indexes of constituents, iff filled with the "add" method
-	 * 
+	 *
 	 * @return list of constituents.
 	 */
 	public List<Integer> getConstituentsList() {
@@ -297,7 +297,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get indexes of constituents, iff filled with the "add" method
-	 * 
+	 *
 	 * @return array of constituents.
 	 */
 	public int[] getConstituents() {
@@ -312,7 +312,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Compute Phi
-	 * 
+	 *
 	 * @return
 	 */
 	public double phi() {
@@ -325,7 +325,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 
 	/**
 	 * Get energy.
-	 * 
+	 *
 	 * @return energy component
 	 */
 	public double e() {
@@ -360,7 +360,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 	 * The method precomputers Phi, Rapidity and Pt2 and store them. Such
 	 * caching makes faster computations. Use getRapidity(), getPhi(), getPt2()
 	 * methods to return such values.
-	 * 
+	 *
 	 */
 	public void cachePhiRapidity() {
 		rapidity = rapidity();
@@ -372,7 +372,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 	 * Add to this particle another particle. The method also precomputes
 	 * rapidity, phi and pt2 for fast retrival using getPhi, getRapidity
 	 * methods.
-	 * 
+	 *
 	 * @param a
 	 */
 	public void add(ParticleD a) {
@@ -388,7 +388,7 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 	 * particle, which will be stored as an array. The method also precomputes
 	 * rapidity, phi and et2 for fast retrival using getPhi, getRapidity
 	 * methods.
-	 * 
+	 *
 	 * @param a
 	 * @param index
 	 *            index of the particle to be stored
