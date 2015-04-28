@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * Main class to perform kt and anti-kT jet algorithm using a geometrical
  * approach as implemented in the FastJet C++ algorithm.
- * 
+ *
  * @author Ivan Pogrebnyak, Sergei Chekanov
  *
  */
@@ -287,9 +287,9 @@ class ClusterSequence {
 		}
 	}
 
-	
+
 	/**
-	 * Main class to perform a clustering 
+	 * Main class to perform a clustering
 	 * @param particles list with input particles
 	 * @param minpt min pT for jets
 	 * @return output jets above certain pT
@@ -423,14 +423,14 @@ class ClusterSequence {
 
 			} else {
 				// identify as jet
-
-				ParticleD jee = new ParticleD(p.px, p.py, p.pz, p.E);
-				if (jee.perp() > minpt)
+				if (Math.sqrt(p.pt2()) > minpt) {
+					ParticleD jee = new ParticleD(p.px, p.py, p.pz, p.E);
 					jets.add(jee);
-				if (p.consts == null)
-					jets.get(jets.size() - 1).addConstituent(p.id);
-				else
-					jets.get(jets.size() - 1).setConstituents(p.consts);
+					if (p.consts == null)
+						jets.get(jets.size() - 1).addConstituent(p.id);
+					else
+						jets.get(jets.size() - 1).setConstituents(p.consts);
+				}
 
 				// print clustering step
 				// System.out.format("%3d Jet   | d = %.5e\n", p.id, dist);
