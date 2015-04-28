@@ -1,4 +1,3 @@
-
 import java.util.*;
 import java.io.*;
 
@@ -76,6 +75,7 @@ class ClusterSequence {
 				break; // kt
 			case 2:
 				diB = 1. / pt2();
+				if (Double.isInfinite(diB)) diB = Double.MAX_VALUE;
 				break; // antikt
 			case 3:
 				diB = 1.;
@@ -297,7 +297,7 @@ class ClusterSequence {
 	public ArrayList<ParticleD> cluster(List<ParticleD> particles, double minpt) {
 		final int n = particles.size();
 		num = 0; // start assigning pseudoJet id from 0
-
+			
 		// initialize the grid
 		use_grid = (n > 50);
 
@@ -308,9 +308,8 @@ class ClusterSequence {
 			return jets;
 
 		// read input particles -------------------------------
-		first = new pseudoJet(particles.get(0).px(), particles.get(0).py(),
+		p = first = new pseudoJet(particles.get(0).px(), particles.get(0).py(),
 				particles.get(0).pz(), particles.get(0).e());
-		p = first;
 		if (use_grid)
 			grid.add(p);
 		for (int i = 1; i < n; ++i) {
@@ -341,26 +340,24 @@ class ClusterSequence {
 		for (p = first; p != null; p = p.next)
 			p.update_dij();
 
-		boolean merge = false;
-
 		// loop until pseudoJets are used up ------------------
 		while (first != null) {
 
-			// if (n<50) use_grid = false;
-
-			double dist = Double.MAX_VALUE;
+			p = first;
+			double dist = p.diB;
+			boolean merge = false;
 
 			// find smallest distance
 			for (pseudoJet q = first; q != null; q = q.next) {
 				if (q.dij < dist) {
 					p = q;
 					dist = q.dij;
+					merge = true;
 				}
 			}
-			merge = true;
 
 			if (p.Rij > jetR2) {
-				for (pseudoJet q = first; q != null; q = q.next) {
+				for (pseudoJet q = first.next; q != null; q = q.next) {
 					if (q.diB < dist) {
 						p = q;
 						dist = q.diB;
@@ -380,8 +377,7 @@ class ClusterSequence {
 					grid.add(first);
 
 				// print clustering step
-				// System.out.format("%3d & %3d | d = %.5e\n",p.id, p.near.id,
-				// dist);
+				// System.out.format("%4d & %4d | d = %.5e\n", p.id, p.near.id, dist);
 
 				// recompute pairwise distances
 				if (use_grid) { // using grid
@@ -427,13 +423,13 @@ class ClusterSequence {
 					ParticleD jee = new ParticleD(p.px, p.py, p.pz, p.E);
 					jets.add(jee);
 					if (p.consts == null)
-						jets.get(jets.size() - 1).addConstituent(p.id);
+						jee.addConstituent(p.id);
 					else
-						jets.get(jets.size() - 1).setConstituents(p.consts);
+						jee.setConstituents(p.consts);
 				}
 
 				// print clustering step
-				// System.out.format("%3d Jet   | d = %.5e\n", p.id, dist);
+				// System.out.format("%4d Jet    | d = %.5e\n", p.id, dist);
 
 				// "remove"
 				p.remove();
@@ -465,8 +461,6 @@ class ClusterSequence {
 				}
 
 			}
-
-			// --n;
 
 		}
 

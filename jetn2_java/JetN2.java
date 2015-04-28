@@ -73,7 +73,7 @@ public class JetN2 {
 		System.out
 				.println("JetN2: Initialization of Java jet algorithm.");
                 System.out
-                                .println("JetN2: Authors: S.Chekanov (ANL),I.Pogrebnyak (MSU)");
+                                .println("JetN2: Authors: S.Chekanov (ANL), I.Pogrebnyak (MSU)");
 
 		System.out
 				.println("JetN2: Inclusive mode using the E-scheme recombination and R="
@@ -263,7 +263,7 @@ public class JetN2 {
 
                String tmp="";
                tmp=tmp+"JetN2: Initialization of Java jet algorithm:\n";
-               tmp=tmp+"JetN2: authors: S.Chekanov (ANL),I.Pogrebnyak (MSU)\n"; 
+               tmp=tmp+"JetN2: authors: S.Chekanov (ANL), I.Pogrebnyak (MSU)\n"; 
                tmp=tmp+"JetN2: Inclusive mode using the E-scheme recombination and R="
                                                 + rs+"\n";
                 if (type.equalsIgnoreCase("kt"))
@@ -306,7 +306,7 @@ public class JetN2 {
 		}
 
 		// for correct benchmark with C++ (after just-in-time compiler)
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; ++i) {
 
 			List<ParticleD> list = new ArrayList<ParticleD>();
 			try {
