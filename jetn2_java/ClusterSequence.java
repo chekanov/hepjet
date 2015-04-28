@@ -344,20 +344,20 @@ class ClusterSequence {
 		while (first != null) {
 
 			p = first;
-      double dist = p.diB;
-      boolean merge = false;
+			double dist = p.diB;
+			boolean merge = false;
 
 			// find smallest distance
 			for (pseudoJet q = first; q != null; q = q.next) {
 				if (q.dij < dist) {
 					p = q;
 					dist = q.dij;
-			    merge = true;
+					merge = true;
 				}
 			}
 
 			if (p.Rij > jetR2) {
-				for (pseudoJet q = first; q != null; q = q.next) {
+				for (pseudoJet q = first.next; q != null; q = q.next) {
 					if (q.diB < dist) {
 						p = q;
 						dist = q.diB;
