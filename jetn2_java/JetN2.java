@@ -104,12 +104,32 @@ public class JetN2 {
 
 
 
+         /**
+         * Initialize calculations of the longitudinally invariant kT algorithm in
+         * inclusive mode. Jet can be clustered using Cambridge/Aachen or anti-kT
+         * approaches, depending on the "type" parameter. The distance parameters
+         * are rapidity and phi. The E-scheme with 4-vector addition is used. 
+         * 
+         * @param R
+         *            distance measure
+         * @param type
+         *            [kt,antikt,ca] <br>
+         *            clustering mode dij=min(kT_i^{2* mode},kT_j^{2* mode})). <br>
+         *            kt : means inclusive kT jet algorithm <br>
+         *            ca: means Cambridge/Aachen jet algorithm <br>
+         *            antikt: means anti-KT jet algorithm <br>
+         * @param minpt
+         *            min pT for final jets.
+         */
+        public JetN2(double R, String type, double minpt) {
+             this(R, 1, type, minpt);
+        }
 
 
 
 	/**
-	 * Initialize calculations of the kT algorithm. Meaningful values are R=0.2-
-	 * 1. Jets are clustered in rapidity and phi space. The The E-scheme with
+	 * Initialize calculations of the antikT algorithm. Meaningful values are R=0.2-
+	 * 1. Jets are clustered in rapidity and phi space. The E-scheme with
 	 * 4-vector addition is used.
 	 * 
 	 * @param R
@@ -118,8 +138,22 @@ public class JetN2 {
 	 *            min pT for final jets.
 	 */
 	public JetN2(double R, double minpt) {
-		this(R, 1, "kt", minpt);
+		this(R, 1, "antikt", minpt);
 	}
+
+
+        /**
+         * Initialize calculations of the kT algorithm. Meaningful values are R=0.2-
+         * 1. Jets are clustered in rapidity and phi space. The E-scheme with
+         * 4-vector addition is used. Minumum pT is set to 5 GeV. 
+         * 
+         * @param R
+         *            distance measure
+         */
+        public JetN2(double R) {
+                this(R, 1, "kt", 5.0);
+        }
+
 
 	/**
 	 * Run the jet algorithm using the list of particles.
@@ -131,6 +165,7 @@ public class JetN2 {
 	public List<ParticleD> buildJets(List<ParticleD> list) {
 
 		jets = seq.cluster(list, minpt);
+                if (debug) printJets(); 
 
 		return jets;
 
