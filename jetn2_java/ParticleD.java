@@ -45,7 +45,6 @@ public class ParticleD implements Comparable<ParticleD>, Serializable {
 		this.energy = energy;
 		cachePhiRapidity();
 		consts = new ArrayList<Integer>();
-		consts.add(new Integer(-1)); // это для чего?
 	}
 
 	/**
