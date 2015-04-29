@@ -5,10 +5,10 @@ All algorithms use double precision and rapidity-phi space to define distances. 
 
 <p>
 <b>fastjet</b>       - the official FastJet implementation <br>
-<b>ktjet</b>         - a modified KtJet (C++) benchmark code. Works in the anti-KT  mode<br>
+<b>ktjet</b>         - Original KtJet (C++) benchmark code. Works in the anti-KT  mode<br>
 <b>nlojet</b>        - implementation of kT-jets from NLOjet++ <br>
-<b>jetn2_java</b>    - a Java implementation of the jet algorithm by I.Pogrebnyak using the N*2 FastJet approach. 
-<b>scjet_cpp</b>     - SCJet. An alternative implementation of kT-jet / anti-kT clustering in C++<br>
+<b>jetn2_java</b>    - Java implementation of the jet algorithm by I.Pogrebnyak using the N*N FastJet approach. <br> 
+<b>scjet_cpp</b>     - An alternative (traditional) implementation of kT-jet / anti-kT (N*N*N)<br>
 <b>scjet_java</b>    - implementation of the SCJet jet algorithm in Java. <br>
 <b>benchmark</b>    -  compare FastJet and SCJet implementations using the same input.<br>
 <p>

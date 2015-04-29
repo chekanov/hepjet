@@ -74,8 +74,10 @@ int main(){
   // a jet algorithm with a given radius parameter
   //----------------------------------------------------------
   double R = 0.6;
- fjcore::JetDefinition jet_def(fjcore::antikt_algorithm, R);
+//  fjcore::JetDefinition jet_def(fjcore::antikt_algorithm, R);
 // fjcore::JetDefinition jet_def(fjcore::kt_algorithm, R);
+ 
+   fjcore::JetDefinition jet_def(fjcore::cambridge_algorithm, R);
 
 
   // run the jet clustering with the above jet definition
