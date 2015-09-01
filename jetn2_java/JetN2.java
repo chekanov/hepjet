@@ -341,7 +341,7 @@ public class JetN2 {
 			System.out.println("Run Nr=" + Integer.toString(i));
 
 			long startTime = System.currentTimeMillis();
-			JetN2 kt = new JetN2(0.6, "ca", 5.0);
+			JetN2 kt = new JetN2(0.6, "antikt", 5.0);
 			kt.setDebug(false);
 			kt.buildJets(list);
 			kt.printJets();
